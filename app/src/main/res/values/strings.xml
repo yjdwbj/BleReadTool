@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">BTRead</string>
+    <string name="title">蓝牙测试工具</string>
+    <string name="menu_scan">搜索</string>
+    <string name="menu_stop">停止</string>
+    <string name="menu_refresh">刷新</string>
+    <string name="error_bluetooth_not_supported">该系统不支持蓝牙</string>
+    <string name="unknown_devices">未知设备</string>
+    <string name="error_bluetooth_initialize">初始化蓝牙错误</string>
+    <string name="connect">连接</string>
+    <string name="disconnect">断开</string>
+    <string name="ble_not_supported">该设备不支持BLE</string>
+    <string name="generic_access">常规</string>
+    <string name="generic_attribute">属性</string>
+    <string name="unknow_service">未知服务</string>
+    <string name="unknow_characteristic">未知特征值</string>
+    <string name="send">发送</string>
+    <string name="read">读取</string>
+    <string name="toggle">切换</string>
+    <string name="startlistener">开始监听....</string>
+</resources>
