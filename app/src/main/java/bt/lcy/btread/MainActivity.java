@@ -17,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.accessibility.AccessibilityManager;
+import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -81,11 +82,11 @@ public class MainActivity extends ListActivity {
         if (btScanner == null || !btScanner.isScanning) {
             menu.findItem(R.id.menu_stop).setVisible(false);
             menu.findItem(R.id.menu_scan).setVisible(true);
-            menu.findItem(R.id.menu_refresh).setActionView(null);
+//            menu.findItem(R.id.menu_refresh).setActionView(null);
         } else {
             menu.findItem(R.id.menu_stop).setVisible(true);
             menu.findItem(R.id.menu_scan).setVisible(false);
-            menu.findItem(R.id.menu_refresh).setActionView(null);
+            // menu.findItem(R.id.menu_refresh).setActionView(null);
         }
 
 

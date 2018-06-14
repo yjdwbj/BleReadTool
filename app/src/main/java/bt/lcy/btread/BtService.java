@@ -58,12 +58,10 @@ public class BtService extends Service {
 
                 intentAction = ACTION_GATT_CONNECTED;
                 connectionState = BluetoothProfile.STATE_CONNECTED;
-                broadcastUpdate(intentAction);
-//                Log.i(TAG,"Gatt services....-> " + );
-                Log.i(TAG,"Connection to GATT Server.");
                 //开启查找服务
                 BtService.this.gatt.discoverServices();
-
+                broadcastUpdate(intentAction);
+                Log.i(TAG,"----------- Connection to GATT Server.");
 
             }else if(newState == BluetoothProfile.STATE_DISCONNECTED)
             {
@@ -185,7 +183,6 @@ public class BtService extends Service {
         // 连接到设备,成功之后回调bluetoothGattCallback
         gatt = device.connectGatt(this,false,bluetoothGattCallback);
         Log.i(TAG,"Connected gatt " + address + " gatt:" + gatt);
-        Log.i(TAG,"Gatt services " + gatt.getServices());
         deviceAddress = address;
         connectionState = BluetoothProfile.STATE_CONNECTED;
         return true;

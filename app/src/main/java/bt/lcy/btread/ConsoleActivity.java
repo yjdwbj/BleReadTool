@@ -11,14 +11,23 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.MultiAutoCompleteTextView;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import adapters.ReadDataAdapter;
 
 public class ConsoleActivity extends AppCompatActivity {
 
@@ -29,17 +38,24 @@ public class ConsoleActivity extends AppCompatActivity {
     public final static String EXTRAS_CHARACTERISTIC_OBJ = "EXTRAS_CHARACTERISTIC_OBJ";
 
 
+    private ListView listData;
     private EditText cmdLine;
-    private TextView echoLine;
     private Button toggle;
     private Button sendRead;
+
+    private MenuItem hexMenuItem;
+    private MenuItem stringMenuItem;
     private static BluetoothGattCharacteristic characteristic;
     private static BtService btService;
     private boolean write = false;
     private boolean read = false;
     private boolean notify = false;
+    private ArrayAdapter<String> readAdapter;
+
+    private ReadDataAdapter readDataAdapter;
 
     private boolean onlyRead = false;
+
 
     public static void setBtService(final BtService btService) {
         ConsoleActivity.btService = btService;
@@ -48,6 +64,17 @@ public class ConsoleActivity extends AppCompatActivity {
     public static void setCharacteristic(final BluetoothGattCharacteristic characteristic) {
         ConsoleActivity.characteristic = characteristic;
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.read_mode, menu);
+        stringMenuItem = menu.findItem(R.id.string_mode);
+        stringMenuItem.setVisible(false);
+        hexMenuItem = menu.findItem(R.id.hex_string_mode);
+        hexMenuItem.setVisible(true);
+        return true;
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,11 +87,17 @@ public class ConsoleActivity extends AppCompatActivity {
 
         int properties = characteristic.getProperties();
 
+
+        readDataAdapter = new ReadDataAdapter(this);
+
+        listData = (ListView) findViewById(R.id.list_read);
+
+        listData.setAdapter(readDataAdapter);
+
         cmdLine = (EditText) findViewById(R.id.edit_cmd);
-        echoLine = (TextView) findViewById(R.id.echo_line);
-        echoLine.setMovementMethod(new ScrollingMovementMethod());
         toggle = (Button) findViewById(R.id.button_toggle);
         sendRead = (Button) findViewById(R.id.button_send);
+
 
         read = (properties & BluetoothGattCharacteristic.PROPERTY_READ) != 0;
         write = (properties & BluetoothGattCharacteristic.PROPERTY_WRITE) != 0;
@@ -84,9 +117,15 @@ public class ConsoleActivity extends AppCompatActivity {
         }
 
         if (read && !write) {
-            toggle.setVisibility(View.GONE);
-            cmdLine.setVisibility(View.GONE);
-            sendRead.setText(R.string.read);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    toggle.setVisibility(View.GONE);
+                    cmdLine.setVisibility(View.GONE);
+                    sendRead.setText(R.string.read);
+                }
+            });
+
         } else if (!read && write) {
             toggle.setVisibility(View.GONE);
             sendRead.setText(R.string.send);
@@ -118,9 +157,9 @@ public class ConsoleActivity extends AppCompatActivity {
                     if (cmdLine.getText().toString().length() == 0)
                         return;
                     Log.i(TAG, "send  some things...............");
-
-                    echoLine.append(cmdLine.getText().toString());
-                    echoLine.append("\n");
+                    readDataAdapter.add(cmdLine.getText().toString());
+//                    echoLine.append(cmdLine.getText().toString());
+//                    echoLine.append("\n");
                     characteristic.setValue(cmdLine.getText().toString());
                     btService.writeCharacteristic(characteristic);
                     cmdLine.setText("");
@@ -131,11 +170,13 @@ public class ConsoleActivity extends AppCompatActivity {
             }
         });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle(characteristic.getUuid().toString());
+        getSupportActionBar().setTitle(R.string.stringmode);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
+
         switch (item.getItemId()) {
             case android.R.id.home: {
                 onBackPressed();
@@ -143,10 +184,39 @@ public class ConsoleActivity extends AppCompatActivity {
                 onStop();
                 return true;
             }
+            case R.id.string_mode: {
+                getSupportActionBar().setTitle(R.string.stringmode);
+                readDataAdapter.setHexMode(false);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        hexMenuItem.setVisible(true);
+                        stringMenuItem.setVisible(false);
+                    }
+                });
+//                invalidateOptionsMenu();
+                return true;
+            }
+            case R.id.hex_string_mode: {
+                readDataAdapter.setHexMode(true);
+                getSupportActionBar().setTitle(R.string.hexstringmode);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        hexMenuItem.setVisible(false);
+                        stringMenuItem.setVisible(true);
+                    }
+                });
+
+//                invalidateOptionsMenu();
+                return true;
+            }
 
         }
         return super.onOptionsItemSelected(item);
     }
+
+
 
     private final BroadcastReceiver gattBroadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -162,23 +232,26 @@ public class ConsoleActivity extends AppCompatActivity {
                 String text = "empty";
                 try {
                     text = new String(characteristic.getValue());
+
                 } catch (NullPointerException e) {
 
                 } finally {
 
                 }
-                echoLine.append(text);
-                echoLine.append("\n");
-                Log.i(TAG, "Get Notify data is " + text);
+
+                readDataAdapter.add(text);
+                final byte[] arr = text.getBytes();
+
+                Log.i(TAG, "+++Get Notify data is " + text);
             }
         }
     };
 
     @Override
     protected void onResume() {
-        super.onResume();
-        registerReceiver(gattBroadcastReceiver, makeGattUpdateIntenFilter());
 
+        registerReceiver(gattBroadcastReceiver, makeGattUpdateIntenFilter());
+        super.onResume();
     }
 
     private static IntentFilter makeGattUpdateIntenFilter() {
@@ -190,18 +263,16 @@ public class ConsoleActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
-        super.onPause();
+
         unregisterReceiver(gattBroadcastReceiver);
         Log.i(TAG, "!!! ConsoleActivity onPuse");
-
+        super.onPause();
     }
 
     @Override
     protected void onStop() {
         if (notify) {
-
             btService.setCharacteristicNotification(characteristic, false);
-
             final BluetoothGattDescriptor descriptor = characteristic.getDescriptor(characteristic.getUuid());
             Log.i(TAG, "get descriptor on stop " + descriptor);
             if (descriptor != null) {

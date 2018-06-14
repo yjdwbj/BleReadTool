@@ -18,4 +18,6 @@
     <string name="read">读取</string>
     <string name="toggle">切换</string>
     <string name="startlistener">开始监听....</string>
+    <string name="stringmode">字符串模式</string>
+    <string name="hexstringmode">HEX模式</string>
 </resources>

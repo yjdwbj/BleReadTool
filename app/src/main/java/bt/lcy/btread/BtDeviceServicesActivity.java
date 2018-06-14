@@ -94,6 +94,7 @@ public class BtDeviceServicesActivity extends AppCompatActivity {
             {
                 onBackPressed();
                 clearUI();
+                btService.disconnect();
                 onStop();
                 return true;
             }

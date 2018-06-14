@@ -1,55 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/console_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:focusable="true"
     android:focusableInTouchMode="true"
     android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/echo_line"
+    <ListView
+        android:id="@+id/list_read"
         android:layout_width="match_parent"
-        android:layout_height="476dp"
-        android:editable="false"
-        android:foregroundGravity="bottom"
-        android:gravity="bottom"
-        android:includeFontPadding="true"
-        android:inputType="textMultiLine|textImeMultiLine|textNoSuggestions"
-        android:lineSpacingExtra="8sp"
-        android:overScrollMode="never"
-        android:scrollbarSize="5dp"
-        android:scrollbars="vertical"
-        android:verticalScrollbarPosition="right" />
+        android:layout_height="462dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="10dp"
+        android:stackFromBottom="true"
+        android:transcriptMode="normal" />
 
     <Button
         android:id="@+id/button_toggle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/echo_line"
-        android:layout_weight="1"
+        android:layout_below="@+id/list_read"
         android:text="@string/toggle" />
 
     <EditText
         android:id="@+id/edit_cmd"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/echo_line"
+        android:layout_below="@+id/list_read"
         android:layout_toEndOf="@+id/button_toggle"
-        android:layout_weight="1"
         android:ems="10"
         android:imeOptions="actionSend|flagNoEnterAction"
         android:inputType="textPersonName" />
 
     <Button
         android:id="@+id/button_send"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_below="@+id/echo_line"
+        android:layout_below="@+id/list_read"
         android:layout_toEndOf="@+id/edit_cmd"
-        android:layout_weight="1"
         android:text="@string/send" />
 
 </RelativeLayout>
