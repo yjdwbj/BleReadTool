@@ -20,4 +20,7 @@
     <string name="startlistener">开始监听....</string>
     <string name="stringmode">字符串模式</string>
     <string name="hexstringmode">HEX模式</string>
+    <string name="inputhit">请输入字符</string>
+    <string name="srv_disconnect">蓝牙已经断开...</string>
+    <string name="about">关于</string>
 </resources>

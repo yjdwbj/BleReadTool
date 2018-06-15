@@ -32,12 +32,6 @@ import adapters.ReadDataAdapter;
 public class ConsoleActivity extends AppCompatActivity {
 
     private final static String TAG = ConsoleActivity.class.getSimpleName();
-
-    public final static String EXTRAS_ATTR = "EXTRAS_ATTR";
-    public final static String EXTRAS_CHARACTERISTIC_UUID = "EXTRAS_CHARACTERISTIC_UUID";
-    public final static String EXTRAS_CHARACTERISTIC_OBJ = "EXTRAS_CHARACTERISTIC_OBJ";
-
-
     private ListView listData;
     private EditText cmdLine;
     private Button toggle;
@@ -50,8 +44,7 @@ public class ConsoleActivity extends AppCompatActivity {
     private boolean write = false;
     private boolean read = false;
     private boolean notify = false;
-    private ArrayAdapter<String> readAdapter;
-
+    
     private ReadDataAdapter readDataAdapter;
 
     private boolean onlyRead = false;
@@ -158,8 +151,6 @@ public class ConsoleActivity extends AppCompatActivity {
                         return;
                     Log.i(TAG, "send  some things...............");
                     readDataAdapter.add(cmdLine.getText().toString());
-//                    echoLine.append(cmdLine.getText().toString());
-//                    echoLine.append("\n");
                     characteristic.setValue(cmdLine.getText().toString());
                     btService.writeCharacteristic(characteristic);
                     cmdLine.setText("");
@@ -243,6 +234,9 @@ public class ConsoleActivity extends AppCompatActivity {
                 final byte[] arr = text.getBytes();
 
                 Log.i(TAG, "+++Get Notify data is " + text);
+            }else if(BtService.ACTION_GATT_DISCONNECTED.equals(action))
+            {
+                Toast.makeText(ConsoleActivity.this,R.string.srv_disconnect,Toast.LENGTH_SHORT);
             }
         }
     };
@@ -266,6 +260,7 @@ public class ConsoleActivity extends AppCompatActivity {
 
         unregisterReceiver(gattBroadcastReceiver);
         Log.i(TAG, "!!! ConsoleActivity onPuse");
+        readDataAdapter.clear();
         super.onPause();
     }
 

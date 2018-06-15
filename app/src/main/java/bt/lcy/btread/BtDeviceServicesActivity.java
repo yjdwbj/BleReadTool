@@ -119,6 +119,7 @@ public class BtDeviceServicesActivity extends AppCompatActivity {
                 isConnected = false;
                 invalidateOptionsMenu();
                 clearUI();
+                Toast.makeText(BtDeviceServicesActivity.this,R.string.srv_disconnect,Toast.LENGTH_SHORT);
 
             }else if(BtService.ACTION_GATT_SERVICES_DISCOVERED.equals(action))
             {
@@ -134,15 +135,6 @@ public class BtDeviceServicesActivity extends AppCompatActivity {
     };
 
 
-
-    private void updateConnectionState(final int resourceId){
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-
-            }
-        });
-    }
 
     private final ExpandableListView.OnChildClickListener childClickListener = new ExpandableListView.OnChildClickListener() {
         @Override
@@ -182,7 +174,7 @@ public class BtDeviceServicesActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.list_services);
-        Toast.makeText(this,"BtDeviceService List",Toast.LENGTH_SHORT);
+//        Toast.makeText(this,"BtDeviceService List",Toast.LENGTH_SHORT);
 
         final Intent intent = getIntent();
         deviceAddress =  intent.getStringExtra(EXTRAS_DEVICE_ADDR);

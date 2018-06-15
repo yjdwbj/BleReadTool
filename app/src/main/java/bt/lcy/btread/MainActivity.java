@@ -2,6 +2,7 @@ package bt.lcy.btread;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -17,6 +18,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.accessibility.AccessibilityManager;
+import android.webkit.WebView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -79,6 +81,7 @@ public class MainActivity extends ListActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.gatt_scan, menu);
+        menu.findItem(R.id.menu_about).setVisible(true);
         if (btScanner == null || !btScanner.isScanning) {
             menu.findItem(R.id.menu_stop).setVisible(false);
             menu.findItem(R.id.menu_scan).setVisible(true);
@@ -129,6 +132,18 @@ public class MainActivity extends ListActivity {
         }
     }
 
+    private void showAboutUs() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        WebView webView = new WebView(this);
+        webView.loadUrl("http://yjdwbj.github.com");
+        webView.getSettings().setDefaultTextEncodingName("UTF-8");
+        webView.loadDataWithBaseURL ("","<p>蓝牙BLE测试工具.</p><p>技术支持请联系:yjdwbj@126.com</p>","text/html","UTF-8","");
+        builder.setView(webView)
+                .setTitle(R.string.about)
+                .setNeutralButton("Ok", null)
+                .show();
+    }
+
     @Override
     protected void onListItemClick(ListView listView, View view, int position, long id) {
         final BluetoothDevice device = btDevicesAdapter.getDevice(position);
@@ -159,6 +174,9 @@ public class MainActivity extends ListActivity {
                     btScanner = null;
                     invalidateOptionsMenu();
                 }
+                break;
+            case R.id.menu_about:
+                showAboutUs();
                 break;
         }
         return true;
