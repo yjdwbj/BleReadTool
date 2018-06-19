@@ -15,7 +15,12 @@
         app:showAsAction="ifRoom|withText" />
     <item
         android:id="@+id/menu_about"
-        android:orderInCategory="102"
+        android:orderInCategory="103"
         app:showAsAction="ifRoom|withText"
         android:title="@string/about" />
+    <item
+        android:id="@+id/github"
+        android:orderInCategory="102"
+        app:showAsAction="ifRoom|withText"
+        android:title="@string/github" />
 </menu>

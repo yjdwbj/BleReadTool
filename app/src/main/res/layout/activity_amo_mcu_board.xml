@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".AmoMcuBoardActivity">
+
+    <Switch
+        android:id="@+id/switch_led1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btn_stop_pwn"
+        android:layout_marginBottom="5dp"
+        android:showText="true"
+        android:switchTextAppearance="@style/TextAppearance.AppCompat.Small"
+        android:text="@string/led1"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textOff="@string/ledoff"
+        android:textOn="@string/ledon" />
+
+    <Switch
+        android:id="@+id/switch_led3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/switch_led2"
+        android:layout_marginBottom="5dp"
+        android:showText="true"
+
+        android:switchTextAppearance="@style/TextAppearance.AppCompat.Small"
+        android:text="@string/led3"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textOff="@string/ledoff"
+        android:textOn="@string/ledon" />
+
+    <Switch
+        android:id="@+id/switch_led2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/switch_led1"
+        android:layout_marginBottom="5dp"
+        android:showText="true"
+
+        android:switchTextAppearance="@style/TextAppearance.AppCompat.Small"
+        android:text="@string/led2"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textOff="@string/ledoff"
+        android:textOn="@string/ledon" />
+
+    <Switch
+        android:id="@+id/switch_led4"
+        android:layout_width="wrap_content"
+
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/switch_led3"
+        android:showText="true"
+        android:switchTextAppearance="@style/TextAppearance.AppCompat.Small"
+        android:text="@string/led4"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textOff="@string/ledoff"
+        android:textOn="@string/ledon" />
+
+    <TextView
+        android:id="@+id/text_adc4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/text_humidity" />
+
+    <TextView
+        android:id="@+id/text_adc5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/text_adc4" />
+
+    <Button
+        android:id="@+id/btn_read_adc45"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/text_adc5"
+        android:text="@string/read_adc45" />
+
+    <TextView
+        android:id="@+id/text_temp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="false"
+        android:layout_marginRight="20dp"
+        android:text="@string/temp" />
+
+    <TextView
+        android:id="@+id/text_humidity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@+id/text_temp"
+        android:text="@string/humidity" />
+
+    <TextView
+        android:id="@+id/text_pwm"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btn_read_adc45"
+        android:layout_marginBottom="20dp" />
+
+    <SeekBar
+        android:id="@+id/seekBar"
+        style="@android:style/Widget.SeekBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/btn_read_adc45"
+        android:layout_toEndOf="@+id/text_pwm"
+        android:max="255"
+        android:progress="0"
+        android:secondaryProgress="255" />
+
+    <Button
+        android:id="@+id/btn_stop_pwn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/text_pwm"
+        android:layout_centerHorizontal="true"
+        android:text="@string/stop_pwn" />
+
+</RelativeLayout>

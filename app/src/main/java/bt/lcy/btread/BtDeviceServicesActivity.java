@@ -26,6 +26,7 @@ import android.widget.Toast;
 
 import java.util.List;
 
+import adapters.BtDevicesAdapter;
 import adapters.BtServicesAdapter;
 
 public class BtDeviceServicesActivity extends AppCompatActivity {
@@ -38,7 +39,7 @@ public class BtDeviceServicesActivity extends AppCompatActivity {
     private TextView deviceNameField;
     private TextView deviceAddressField;
 
-    private BtService btService;
+    static private BtService btService;
 
     private String deviceName;
     private String deviceAddress;
@@ -46,29 +47,10 @@ public class BtDeviceServicesActivity extends AppCompatActivity {
 
     private BtServicesAdapter btServicesAdapter;
     private ExpandableListView expandableListView;
+//    private Activity parentActivity;
 
 
-    private final ServiceConnection serviceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            btService = ((BtService.LocalBinder)service).getService();
-            if(!btService.initialize())
-            {
-                Toast.makeText(BtDeviceServicesActivity.this,R.string.error_bluetooth_initialize,Toast.LENGTH_SHORT).show();
-                finish();
-            }
-            Log.i(TAG,"Connection Service");
-            btService.connect(deviceAddress);
 
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            Log.w(TAG,"Disconnection Service");
-            clearUI();
-            btService = null;
-        }
-    };
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
@@ -92,10 +74,11 @@ public class BtDeviceServicesActivity extends AppCompatActivity {
                 return true;
             case android.R.id.home:
             {
-                onBackPressed();
+
                 clearUI();
-                btService.disconnect();
-                onStop();
+                btService.onDestroy();
+                btService = null;
+                onBackPressed();
                 return true;
             }
 
@@ -104,24 +87,33 @@ public class BtDeviceServicesActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onStop() {
+
+        super.onStop();
+    }
+
     private final BroadcastReceiver gattBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             final  String action = intent.getAction();
 
-            Log.i(TAG,"!!!!!Got a BroadCast: " + action);
+//            Log.i(TAG,"!!!!!Got a BroadCast: " + action);
             if(BtService.ACTION_GATT_CONNECTED.equals(action))
             {
                 isConnected = true;
                 invalidateOptionsMenu();
-            }else if(BtService.ACTION_GATT_DISCONNECTED.equals(action))
+            }
+            else if(BtService.ACTION_GATT_DISCONNECTED.equals(action))
             {
                 isConnected = false;
-                invalidateOptionsMenu();
-                clearUI();
-                Toast.makeText(BtDeviceServicesActivity.this,R.string.srv_disconnect,Toast.LENGTH_SHORT);
 
-            }else if(BtService.ACTION_GATT_SERVICES_DISCOVERED.equals(action))
+                clearUI();
+                Toast.makeText(getApplicationContext(),R.string.srv_disconnect,Toast.LENGTH_SHORT).show();
+                invalidateOptionsMenu();
+
+            }
+            else if(BtService.ACTION_GATT_SERVICES_DISCOVERED.equals(action))
             {
                 displayGattServices(btService.getSupportedGattServices());
             }else if(BtService.ACTION_DATA_AVAILABLE.equals(action))
@@ -129,7 +121,7 @@ public class BtDeviceServicesActivity extends AppCompatActivity {
                final String uuid = intent.getStringExtra(BtService.EXTRA_SERVICE_UUID);
                final String text = intent.getStringExtra(BtService.EXTRA_TEXT);
                final String cuuid = intent.getStringExtra(BtService.EXTRA_CHARACTERISTIC_UUID);
-               Log.i(TAG, " ACTION_DATA_AVAILABLE uuid: " + uuid + " cuuid :" + cuuid + " text:" + text);
+//               Log.i(TAG, " ACTION_DATA_AVAILABLE uuid: " + uuid + " cuuid :" + cuuid + " text:" + text);
             }
         }
     };
@@ -150,22 +142,24 @@ public class BtDeviceServicesActivity extends AppCompatActivity {
             final BluetoothGattCharacteristic characteristic = btServicesAdapter.getChild(groupPosition,childPosition);
             ConsoleActivity.setCharacteristic(characteristic);
             ConsoleActivity.setBtService(btService);
+
+
             final Intent cmdIntent = new Intent(BtDeviceServicesActivity.this,ConsoleActivity.class);
             startActivity(cmdIntent);
             return true;
         }
     };
 
-    public BtService getBtService() {
-        return btService;
+    static public void setBtService(final BtService service)
+    {
+        BtDeviceServicesActivity.btService = service;
     }
 
     private void displayGattServices(List<BluetoothGattService> gattServiceList)
     {
-        Log.w(TAG,"-->>displayGattServices ..... size : " + gattServiceList.size());
+//        Log.w(TAG,"-->>displayGattServices ..... size : " + gattServiceList.size());
         if(gattServiceList == null) return;
-
-        btServicesAdapter = new BtServicesAdapter(this,gattServiceList);
+        btServicesAdapter = new BtServicesAdapter(this, gattServiceList);
         expandableListView.setAdapter(btServicesAdapter);
 
     }
@@ -174,6 +168,7 @@ public class BtDeviceServicesActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.list_services);
+
 //        Toast.makeText(this,"BtDeviceService List",Toast.LENGTH_SHORT);
 
         final Intent intent = getIntent();
@@ -190,12 +185,13 @@ public class BtDeviceServicesActivity extends AppCompatActivity {
         expandableListView.setOnChildClickListener(childClickListener);
 
 
-        Log.i(TAG,"BtDeviceService List ....... " + deviceAddress);
+//        Log.i(TAG,"BtDeviceService List ....... " + deviceAddress);
         getSupportActionBar().setTitle(deviceName);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        displayGattServices(btService.getSupportedGattServices());
 
-        final Intent gattIntent = new Intent(this,BtService.class);
-        bindService(gattIntent,serviceConnection,BIND_AUTO_CREATE);
+//        final Intent gattIntent = new Intent(this,BtService.class);
+//        bindService(gattIntent,serviceConnection,BIND_AUTO_CREATE);
 
     }
 
@@ -222,7 +218,8 @@ public class BtDeviceServicesActivity extends AppCompatActivity {
     @Override
     protected void onDestroy(){
         super.onDestroy();
-        unbindService(serviceConnection);
+//        btService.disconnect();
+//        unbindService(serviceConnection);
         btService = null;
     }
 

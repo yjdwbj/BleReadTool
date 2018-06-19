@@ -44,7 +44,7 @@ public class ConsoleActivity extends AppCompatActivity {
     private boolean write = false;
     private boolean read = false;
     private boolean notify = false;
-    
+
     private ReadDataAdapter readDataAdapter;
 
     private boolean onlyRead = false;
@@ -98,15 +98,19 @@ public class ConsoleActivity extends AppCompatActivity {
 
         if (notify) {
             Toast.makeText(this, R.string.startlistener, Toast.LENGTH_SHORT).show();
-            Log.i(TAG, "Notify....");
             btService.setCharacteristicNotification(characteristic, true);
         }
 
         final BluetoothGattDescriptor descriptor = characteristic.getDescriptor(characteristic.getUuid());
-        Log.i(TAG, "get descriptor " + descriptor);
+
         if (descriptor != null) {
+            Log.i(TAG,"getDescriptor ONE:  " + descriptor.getUuid());
             descriptor.setValue(BluetoothGattDescriptor.ENABLE_INDICATION_VALUE);
             btService.writeDescriptor(descriptor);
+        } else {
+            Log.w(TAG,"characteristic.getUuid() " + characteristic.getUuid() + " get descriptor null ");
+
+
         }
 
         if (read && !write) {
@@ -208,7 +212,6 @@ public class ConsoleActivity extends AppCompatActivity {
     }
 
 
-
     private final BroadcastReceiver gattBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -234,9 +237,8 @@ public class ConsoleActivity extends AppCompatActivity {
                 final byte[] arr = text.getBytes();
 
                 Log.i(TAG, "+++Get Notify data is " + text);
-            }else if(BtService.ACTION_GATT_DISCONNECTED.equals(action))
-            {
-                Toast.makeText(ConsoleActivity.this,R.string.srv_disconnect,Toast.LENGTH_SHORT);
+            } else if (BtService.ACTION_GATT_DISCONNECTED.equals(action)) {
+                Toast.makeText(ConsoleActivity.this, R.string.srv_disconnect, Toast.LENGTH_SHORT).show();
             }
         }
     };
@@ -266,7 +268,7 @@ public class ConsoleActivity extends AppCompatActivity {
 
     @Override
     protected void onStop() {
-        if (notify) {
+        if (notify&& characteristic != null) {
             btService.setCharacteristicNotification(characteristic, false);
             final BluetoothGattDescriptor descriptor = characteristic.getDescriptor(characteristic.getUuid());
             Log.i(TAG, "get descriptor on stop " + descriptor);

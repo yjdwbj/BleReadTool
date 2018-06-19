@@ -7,10 +7,15 @@ import android.app.ListActivity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,6 +26,7 @@ import android.view.accessibility.AccessibilityManager;
 import android.webkit.WebView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +37,8 @@ import adapters.BtDevicesAdapter;
 public class MainActivity extends ListActivity {
 
     private final static String TAG = MainActivity.class.getSimpleName();
+    private BtService btService;
+    private MenuItem stopScann;
 
     // Used to load the 'native-lib' library on application startup.
     static {
@@ -40,12 +48,16 @@ public class MainActivity extends ListActivity {
     private BluetoothAdapter bluetoothAdapter;
     private BtScanner btScanner;
     private BtDevicesAdapter btDevicesAdapter;
+    private boolean isBinded = false;
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 //        setContentView(R.layout.activity_main);
+
+
 
         getActionBar().setTitle(R.string.title);
 
@@ -82,6 +94,7 @@ public class MainActivity extends ListActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.gatt_scan, menu);
         menu.findItem(R.id.menu_about).setVisible(true);
+        stopScann = menu.findItem(R.id.menu_scan);
         if (btScanner == null || !btScanner.isScanning) {
             menu.findItem(R.id.menu_stop).setVisible(false);
             menu.findItem(R.id.menu_scan).setVisible(true);
@@ -92,13 +105,28 @@ public class MainActivity extends ListActivity {
             // menu.findItem(R.id.menu_refresh).setActionView(null);
         }
 
-
         return true;
     }
 
 
+    private final BroadcastReceiver gattBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final  String action = intent.getAction();
+
+//            Log.i(TAG,"!!!!!Got a BroadCast: " + action);
+            if(BtService.ACTION_GATT_SERVICES_DISCOVERED.equals(action))
+            {
+                startActivity();
+            }
+        }
+    };
+
+
     @Override
     protected void onResume() {
+        //要注册才能开启使用
+        registerReceiver(gattBroadcastReceiver,makeGattUpdateIntenFilter());
         super.onResume();
 
         if (!bluetoothAdapter.isEnabled()) {
@@ -124,12 +152,19 @@ public class MainActivity extends ListActivity {
 
     @Override
     protected void onPause() {
-        super.onPause();
-
+        Log.i(TAG,TAG + " onPause.....");
         if (btScanner != null) {
             btScanner.stopScanning();
             btScanner = null;
         }
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(gattBroadcastReceiver);
+        unbindService(serviceConnection);
     }
 
     private void showAboutUs() {
@@ -144,16 +179,59 @@ public class MainActivity extends ListActivity {
                 .show();
     }
 
+    private final ServiceConnection serviceConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            isBinded = true;
+            btService = ((BtService.LocalBinder)service).getService();
+
+            final String deviceAddress = getIntent().getStringExtra(BtDeviceServicesActivity.EXTRAS_DEVICE_ADDR);
+            if(!btService.initialize())
+            {
+                Toast.makeText(MainActivity.this,R.string.error_bluetooth_initialize,Toast.LENGTH_SHORT).show();
+                finish();
+            }
+            Log.i(TAG,"Connection Service");
+//            btService.connect(deviceAddress);
+            btService.connect();
+
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            Log.w(TAG,"Disconnection Service");
+            Toast.makeText(MainActivity.this,R.string.srv_disconnect,Toast.LENGTH_SHORT).show();
+          //  clearUI();
+
+            btService = null;
+        }
+    };
+
     @Override
     protected void onListItemClick(ListView listView, View view, int position, long id) {
+
+        view.setSelected(true);
+        btDevicesAdapter.setProcessFlag(true);
+        if(isBinded)
+            unbindService(serviceConnection);
+
+        if (btScanner != null) {
+            btScanner.stopScanning();
+            btScanner = null;
+            invalidateOptionsMenu();
+        }
         final BluetoothDevice device = btDevicesAdapter.getDevice(position);
         if (device == null) return;
 
+
+
+        final Intent gattIntent = new Intent(this,BtService.class);
+        gattIntent.putExtra(BtDeviceServicesActivity.EXTRAS_DEVICE_NAME, device.getName());
+        gattIntent.putExtra(BtDeviceServicesActivity.EXTRAS_DEVICE_ADDR, device.getAddress());
+        bindService(gattIntent,serviceConnection,BIND_AUTO_CREATE);
         Log.w(TAG, "Connect to device: " + device.getName() + " addr: " + device.getAddress());
-        final Intent intent = new Intent(this, BtDeviceServicesActivity.class);
-        intent.putExtra(BtDeviceServicesActivity.EXTRAS_DEVICE_NAME, device.getName());
-        intent.putExtra(BtDeviceServicesActivity.EXTRAS_DEVICE_ADDR, device.getAddress());
-        startActivity(intent);
+
     }
 
 
@@ -162,6 +240,7 @@ public class MainActivity extends ListActivity {
         switch (item.getItemId()) {
             case R.id.menu_scan:
                 btDevicesAdapter.clear();
+                btDevicesAdapter.notifyDataSetChanged();
                 if (btScanner == null) {
                     btScanner = new BtScanner(bluetoothAdapter, mLeScanCallback);
                     btScanner.startScanning();
@@ -178,6 +257,10 @@ public class MainActivity extends ListActivity {
             case R.id.menu_about:
                 showAboutUs();
                 break;
+            case R.id.github:
+                showGithub();
+                break;
+
         }
         return true;
     }
@@ -216,6 +299,40 @@ public class MainActivity extends ListActivity {
             btScanner.startScanning();
         }
         invalidateOptionsMenu();
+    }
+
+
+    private void showGithub()
+    {
+        final Intent webview = new Intent(this,WebClient.class);
+        startActivity(webview);
+    }
+
+
+    private static IntentFilter makeGattUpdateIntenFilter() {
+        final IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(BtService.ACTION_GATT_CONNECTED);
+        intentFilter.addAction(BtService.ACTION_GATT_SERVICES_DISCOVERED);
+        return intentFilter;
+    }
+
+    private void startActivity()
+    {
+
+        btDevicesAdapter.setProcessFlag(false);
+        if(btService.isAmoBoard())
+        {
+            //打开AmoMcu开发板独立页面.
+            AmoMcuBoardActivity.setBtService(btService);
+            final Intent amoBoard = new Intent(this,AmoMcuBoardActivity.class);
+            startActivity(amoBoard);
+        }else{
+            BtDeviceServicesActivity.setBtService(btService);
+            final Intent intent = new Intent(this, BtDeviceServicesActivity.class);
+            intent.putExtra(BtDeviceServicesActivity.EXTRAS_DEVICE_NAME, btService.getDevice().getName());
+            intent.putExtra(BtDeviceServicesActivity.EXTRAS_DEVICE_ADDR, btService.getDevice().getAddress());
+            startActivity(intent);
+        }
     }
 
     /**

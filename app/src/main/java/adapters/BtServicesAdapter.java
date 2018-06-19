@@ -18,7 +18,9 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
+import bt.lcy.btread.BtStaticVal;
 import bt.lcy.btread.ConsoleActivity;
 import bt.lcy.btread.R;
 
@@ -28,8 +30,7 @@ public class BtServicesAdapter extends BaseExpandableListAdapter {
 
     private static final String TAG = BtServicesAdapter.class.getSimpleName();
 
-    private static final String GENERIC_ACCESS_UUID = "00001800-0000-1000-8000-00805f9b34fb";
-    private static final String GENERIC_ATTRIBUTE_UUID = "00001801-0000-1000-8000-00805f9b34fb";
+
 
 
     public interface onServiceItemClickListener {
@@ -37,13 +38,13 @@ public class BtServicesAdapter extends BaseExpandableListAdapter {
         public  void onServiceEnabled(BluetoothGattService service,boolean enabled);
         public void  onServiceUpdate(BluetoothGattService service);
     }
-
     private onServiceItemClickListener serviceItemClickListener;
     private  Context context;
 
     private final LayoutInflater inflater;
     private final ArrayList<BluetoothGattService> serviceArrayList;
     private final HashMap<BluetoothGattService,ArrayList<BluetoothGattCharacteristic>> hashMap;
+
     public BtServicesAdapter(Context context, List<BluetoothGattService> gattServiceList)
     {
         inflater = LayoutInflater.from(context);
@@ -130,17 +131,9 @@ public class BtServicesAdapter extends BaseExpandableListAdapter {
 
         final BluetoothGattService service = serviceArrayList.get(groupPosition);
         final String uuid = service.getUuid().toString();
+        final String subuuid = uuid.substring(0,8);
         viewHolder.uuid.setText(uuid);
-        if(uuid.equals(GENERIC_ACCESS_UUID))
-        {
-            viewHolder.cname.setText(R.string.generic_access);
-        }else if(uuid.equals(GENERIC_ATTRIBUTE_UUID))
-        {
-            viewHolder.cname.setText(R.string.generic_attribute);
-        }else{
-            viewHolder.cname.setText(R.string.unknow_service);
-        }
-
+        viewHolder.cname.setText(BtStaticVal.getServices(subuuid));
         return convertView;
     }
 
@@ -186,10 +179,13 @@ public class BtServicesAdapter extends BaseExpandableListAdapter {
             attr +=  attr.isEmpty() ?  "Notify" : " Notify";
         }
 
-
+        final String uuidstr = characteristic.getUuid().toString();
+        final String subuuid = uuidstr.substring(0,8);
+//        Log.i(TAG,"sub uuid is :" + subuuid);
         holder.attr.setText(attr);
-        holder.cname.setText(R.string.unknow_characteristic);
-        holder.uuid.setText(characteristic.getUuid().toString());
+        holder.cname.setText(BtStaticVal.getCharacteristics(subuuid));
+
+        holder.uuid.setText(uuidstr);
         return convertView;
     }
 
