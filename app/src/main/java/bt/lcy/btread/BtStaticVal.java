@@ -50,8 +50,18 @@ public class BtStaticVal {
     public static final String GENERIC_ACCESS_UUID = "00001800";
     public static final String GENERIC_ATTRIBUTE_UUID = "00001801";
     public static final String IMMEDIATE_ALERT = "00001802";
+    public static final String LINK_LOSS = "00001803";
+    public static final String CURRENT_TIME_SERVICE = "00001805";
+
+    public static final String BLOOD_PRESSURE = "00001810";
+    public static final String ALERT_NOTIFICATION_SERVICE = "00001811";
+    public static final String CYCLING_SPEED_AND_CADENCE = "00001816";
+    public static final String CYCLING_POWER = "00001818";
     public static final String DEVICE_INFORMATION_SERVICE = "0000180a";
     public static final String BATTERY_SERVICE="0000180f";
+    public static final String HEART_RATE="0000180d";
+    public static final String USER_DATA="0000181c";
+    public static final String ENVIRONMENTAL_SENSING ="0000181a";
 
 
 
@@ -66,7 +76,17 @@ public class BtStaticVal {
         serviceMap.put(GENERIC_ATTRIBUTE_UUID,R.string.generic_attribute);
         serviceMap.put(IMMEDIATE_ALERT,R.string.immediate_alert);
         serviceMap.put(DEVICE_INFORMATION_SERVICE,R.string.device_information_service);
-        serviceMap.put(BATTERY_SERVICE,R.string.battery_level);
+        serviceMap.put(LINK_LOSS,R.string.link_loss);
+        serviceMap.put(CURRENT_TIME_SERVICE,R.string.current_time_service);
+        serviceMap.put(BLOOD_PRESSURE,R.string.blood_pressure);
+        serviceMap.put(ALERT_NOTIFICATION_SERVICE,R.string.alert_notification_service);
+        serviceMap.put(CYCLING_SPEED_AND_CADENCE,R.string.cycling_speed_and_cadence);
+        serviceMap.put(CYCLING_POWER,R.string.cycling_power);
+        serviceMap.put(BATTERY_SERVICE,R.string.battery_service);
+        serviceMap.put(HEART_RATE,R.string.heart_rate);
+        serviceMap.put(USER_DATA,R.string.user_data);
+        serviceMap.put(ENVIRONMENTAL_SENSING,R.string.environmental_sensing);
+
     }
 
     // characteristics

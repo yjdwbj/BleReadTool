@@ -6,8 +6,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,12 +18,10 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.common.util.HexDumpUtils;
-
 import java.nio.ByteBuffer;
-import java.text.DecimalFormat;
 import java.util.Timer;
 import java.util.TimerTask;
+
 
 public class AmoMcuBoardActivity extends AppCompatActivity {
 

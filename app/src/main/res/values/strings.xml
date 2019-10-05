@@ -31,8 +31,8 @@
     <string name="service_changed">切换服务</string>
     <string name="temp">当前温度:</string>
     <string name="humidity">当前湿度:</string>
-    <string name="adc4">当前P0.4的ADC4读数:0x%04X, 电压: %3.2fV.</string>
-    <string name="adc5">当前P0.5的ADC5读数:0x%04X, 电压: %3.2fV.</string>
+    <string name="adc4">当前P0.4的ADC4读数:0x%1$04X, 电压: %2$3.2fV.</string>
+    <string name="adc5">当前P0.5的ADC5读数:0x%1$04X, 电压: %2$3.2fV.</string>
     <string name="pwm">PWM:</string>
     <string name="ledon">开</string>
     <string name="ledoff">关</string>
@@ -40,7 +40,7 @@
     <string name="led1">LED1</string>
     <string name="led2">LED2</string>
     <string name="led3">LED3</string>
-    <string name="led4">LED4</string>
+    <string name="led4">继电器</string>
     <string name="systemid">System ID</string>
     <string name="model_number">Model Number</string>
     <string name="serial_number">Serial Number</string>
@@ -56,4 +56,14 @@
     <string name="pnp_id">PnP ID</string>
     <string name="stop_pwn">关闭PWN</string>
     <string name="github">GitHub</string>
+    <string name="environmental_sensing">Environmental Sensing</string>
+    <string name="cycling_power">Cycling Power</string>
+    <string name="cycling_speed_and_cadence">Cycling Speed and Cadence</string>
+    <string name="current_time_service">Current Time Service</string>
+    <string name="body_composition">Body Composition</string>
+    <string name="user_data">用户数据</string>
+    <string name="link_loss">Link Loss</string>
+    <string name="heart_rate">Heart Rate</string>
+    <string name="blood_pressure">Blood Pressure</string>
+    <string name="alert_notification_service">Alert Notification Service</string>
 </resources>
