@@ -1,5 +1,7 @@
 package bt.lcy.btread;
 
+import bt.lcy.btread.BuildConfig;
+
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -7,6 +9,11 @@ import android.app.ListActivity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
+import android.bluetooth.le.BluetoothLeScanner;
+import android.bluetooth.le.ScanCallback;
+import android.bluetooth.le.ScanFilter;
+import android.bluetooth.le.ScanResult;
+import android.bluetooth.le.ScanSettings;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -15,6 +22,7 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.os.Handler;
 import android.os.IBinder;
 //import android.support.v7.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,15 +40,36 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 import adapters.BtDevicesAdapter;
 
-public class MainActivity extends ListActivity {
+public class MainActivity extends ListActivity  {
 
     private final static String TAG = MainActivity.class.getSimpleName();
     private BtService btService;
     private MenuItem stopScann;
+    private boolean mScanning;
+    private Handler handler;
+
+    // BLE相关。
+    private BluetoothLeScanner mLEScanner;
+    private ScanSettings settings;
+    private List<ScanFilter> filters;
+
+    // Stops scanning after 10 seconds.
+    private static final long SCAN_PERIOD = 10000;
+    private static final Map<Integer,String> leStatus = new HashMap<Integer,String>(){{
+        put(ScanCallback.SCAN_FAILED_ALREADY_STARTED,"扫描进行中");
+        put(ScanCallback.SCAN_FAILED_APPLICATION_REGISTRATION_FAILED,"程序没有注册");
+        put(ScanCallback.SCAN_FAILED_INTERNAL_ERROR,"内部错误");
+        put(ScanCallback.SCAN_FAILED_FEATURE_UNSUPPORTED,"不支持特性");
+    }};
+
 
     // Used to load the 'native-lib' library on application startup.
     static {
@@ -52,15 +81,47 @@ public class MainActivity extends ListActivity {
     private BtDevicesAdapter btDevicesAdapter;
     private boolean isBinded = false;
 
+    //搜索蓝牙的回调函数
+    private BluetoothAdapter.LeScanCallback leScanCallback =
+            new BluetoothAdapter.LeScanCallback() {
+                @Override
+                public void onLeScan(final BluetoothDevice device, final int rssi, byte[] scanRecord) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            btDevicesAdapter.addDevice(device, rssi);
+                            btDevicesAdapter.notifyDataSetChanged();
+                        }
+                    });
+                }
+            };
 
+    private ScanCallback mScanCallback = new ScanCallback() {
+        @Override
+        public void onScanResult(int callbackType, ScanResult result) {
+            Log.w("callbackType", String.valueOf(callbackType));
+            Log.w("result", result.toString());
+            BluetoothDevice btDevice = result.getDevice();
+            Log.w("btDevice",btDevice.toString());
+            btDevicesAdapter.addDevice(btDevice, result.getRssi());
+            btDevicesAdapter.notifyDataSetChanged();
+        }
+        @Override
+        public void onBatchScanResults(List<ScanResult> results) {
+            for (ScanResult sr : results) {
+                Log.w("ScanResult - Results", sr.toString());
+            }
+        }
+        @Override
+        public void onScanFailed(int errorCode) {
+            Log.e("Scan Failed", "Error Code: " + errorCode);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        handler = new Handler();
         super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_main);
-
-
-
         getActionBar().setTitle(R.string.title);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -75,7 +136,7 @@ public class MainActivity extends ListActivity {
             return;
         }
 
-
+        // 获取 BluetoothAdapter
         final BluetoothManager bluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         bluetoothAdapter = bluetoothManager.getAdapter();
 
@@ -87,9 +148,17 @@ public class MainActivity extends ListActivity {
         }
 
 
-        // Example of a call to a native method
-//        TextView tv = (TextView) findViewById(R.id.sample_text);
-//        tv.setText(stringFromJNI());
+        btDevicesAdapter = new BtDevicesAdapter(getBaseContext());
+        setListAdapter(btDevicesAdapter);
+
+        invalidateOptionsMenu();
+        // 扫描BLE设备。
+        if(Build.VERSION.SDK_INT>=21){
+            Log.w(TAG, " Build.VERSION.SDK_INT>=21 getBluetoothLeScanner");
+            mLEScanner = bluetoothAdapter.getBluetoothLeScanner();
+            settings = new ScanSettings.Builder().setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY).setReportDelay(0).build();
+            filters = new ArrayList<ScanFilter>();
+        }
     }
 
     @Override
@@ -97,14 +166,12 @@ public class MainActivity extends ListActivity {
         getMenuInflater().inflate(R.menu.gatt_scan, menu);
         menu.findItem(R.id.menu_about).setVisible(true);
         stopScann = menu.findItem(R.id.menu_scan);
-        if (btScanner == null || !btScanner.isScanning) {
+        if (!mScanning) {
             menu.findItem(R.id.menu_stop).setVisible(false);
             menu.findItem(R.id.menu_scan).setVisible(true);
-//            menu.findItem(R.id.menu_refresh).setActionView(null);
         } else {
             menu.findItem(R.id.menu_stop).setVisible(true);
             menu.findItem(R.id.menu_scan).setVisible(false);
-            // menu.findItem(R.id.menu_refresh).setActionView(null);
         }
 
         return true;
@@ -116,7 +183,7 @@ public class MainActivity extends ListActivity {
         public void onReceive(Context context, Intent intent) {
             final  String action = intent.getAction();
 
-//            Log.i(TAG,"!!!!!Got a BroadCast: " + action);
+            Log.w(TAG,"!!!!!Got a BroadCast: " + action);
             if(BtService.ACTION_GATT_SERVICES_DISCOVERED.equals(action))
             {
                 startActivity();
@@ -135,9 +202,7 @@ public class MainActivity extends ListActivity {
             final Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
 
             startActivityForResult(enableBtIntent, 1);
-            return;
         }
-        init();
     }
 
     @Override
@@ -145,8 +210,6 @@ public class MainActivity extends ListActivity {
         if (requestCode == 1) {
             if (resultCode == Activity.RESULT_CANCELED) {
                 finish();
-            } else {
-                init();
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
@@ -155,18 +218,21 @@ public class MainActivity extends ListActivity {
     @Override
     protected void onPause() {
         Log.i(TAG,TAG + " onPause.....");
-        if (btScanner != null) {
-            btScanner.stopScanning();
-            btScanner = null;
-        }
+//        if (btScanner != null) {
+//            btScanner.stopScanning();
+//            btScanner = null;
+//        }
+//        super.onPause();
+        scanLeDevice(false);
         super.onPause();
     }
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
+
         unregisterReceiver(gattBroadcastReceiver);
         unbindService(serviceConnection);
+        super.onDestroy();
     }
 
     private void showAboutUs() {
@@ -174,7 +240,9 @@ public class MainActivity extends ListActivity {
         WebView webView = new WebView(this);
         webView.loadUrl("http://yjdwbj.github.com");
         webView.getSettings().setDefaultTextEncodingName("UTF-8");
-        webView.loadDataWithBaseURL ("","<p>蓝牙BLE测试工具.</p><p>技术支持请联系:yjdwbj@126.com</p>","text/html","UTF-8","");
+        String versionName = BuildConfig.VERSION_NAME;
+        String ver = "<p>蓝牙BLE测试工具  v%s </p><p>技术支持请联系:yjdwbj@126.com</p>";
+        webView.loadDataWithBaseURL ("", String.format(ver, versionName),"text/html","UTF-8","");
         builder.setView(webView)
                 .setTitle(R.string.about)
                 .setNeutralButton("Ok", null)
@@ -212,15 +280,14 @@ public class MainActivity extends ListActivity {
 
     @Override
     protected void onListItemClick(ListView listView, View view, int position, long id) {
-
+        // 连接所选的设备。
         view.setSelected(true);
         btDevicesAdapter.setProcessFlag(true);
         if(isBinded)
             unbindService(serviceConnection);
 
-        if (btScanner != null) {
-            btScanner.stopScanning();
-            btScanner = null;
+        if(mScanning){
+            scanLeDevice(false);
             invalidateOptionsMenu();
         }
         final BluetoothDevice device = btDevicesAdapter.getDevice(position);
@@ -243,18 +310,22 @@ public class MainActivity extends ListActivity {
             case R.id.menu_scan:
                 btDevicesAdapter.clear();
                 btDevicesAdapter.notifyDataSetChanged();
-                if (btScanner == null) {
-                    btScanner = new BtScanner(bluetoothAdapter, mLeScanCallback);
-                    btScanner.startScanning();
-                    invalidateOptionsMenu();
-                }
+//                if (btScanner == null) {
+//                    btScanner = new BtScanner(bluetoothAdapter, leScanCallback);
+//                    btScanner.startScanning();
+//                    invalidateOptionsMenu();
+//                }
+                scanLeDevice(true);
+                invalidateOptionsMenu();
                 break;
             case R.id.menu_stop:
-                if (btScanner != null) {
-                    btScanner.stopScanning();
-                    btScanner = null;
-                    invalidateOptionsMenu();
-                }
+                scanLeDevice(false);
+                invalidateOptionsMenu();
+//                if (btScanner != null) {
+//                    btScanner.stopScanning();
+//                    btScanner = null;
+//                    invalidateOptionsMenu();
+//                }
                 break;
             case R.id.menu_about:
                 showAboutUs();
@@ -272,36 +343,6 @@ public class MainActivity extends ListActivity {
      * which is packaged with this application.
      */
     public native String stringFromJNI();
-
-
-    //搜索蓝牙的回调函数
-    private BluetoothAdapter.LeScanCallback mLeScanCallback =
-            new BluetoothAdapter.LeScanCallback() {
-                @Override
-                public void onLeScan(final BluetoothDevice device, final int rssi, byte[] scanRecord) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            btDevicesAdapter.addDevice(device, rssi);
-                            btDevicesAdapter.notifyDataSetChanged();
-                        }
-                    });
-                }
-            };
-
-    private void init() {
-        if (btDevicesAdapter == null) {
-            btDevicesAdapter = new BtDevicesAdapter(getBaseContext());
-            setListAdapter(btDevicesAdapter);
-        }
-
-        if (btScanner == null) {
-            Toast.makeText(this, "Start Scanning....", Toast.LENGTH_SHORT).show();
-            btScanner = new BtScanner(bluetoothAdapter, mLeScanCallback);
-            btScanner.startScanning();
-        }
-        invalidateOptionsMenu();
-    }
 
 
     private void showGithub()
@@ -336,6 +377,38 @@ public class MainActivity extends ListActivity {
             startActivity(intent);
         }
     }
+
+    // 扫描BLE设备。
+    private void scanLeDevice(final boolean enable) {
+
+        mScanning = enable;
+        if (enable) {
+            Log.w(TAG, "start to scanLeDevice........");
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (Build.VERSION.SDK_INT < 21) {
+                        bluetoothAdapter.stopLeScan(leScanCallback);
+                    } else {
+                        mLEScanner.stopScan(mScanCallback);
+                    }
+                }
+            }, SCAN_PERIOD);
+            if (Build.VERSION.SDK_INT < 21) {
+                bluetoothAdapter.startLeScan(leScanCallback);
+            } else {
+                mLEScanner.startScan(filters, settings, mScanCallback);
+            }
+        } else {
+            Log.w(TAG, "stop to scanLeDevice........");
+            if (Build.VERSION.SDK_INT < 21) {
+                bluetoothAdapter.stopLeScan(leScanCallback);
+            } else {
+                mLEScanner.stopScan(mScanCallback);
+            }
+        }
+    }
+
 
     /**
      * 搜索蓝牙的线程
@@ -382,7 +455,7 @@ public class MainActivity extends ListActivity {
                         bluetoothAdapter.startLeScan(mLeScanCallback);
                     }
 
-                    sleep(1000);
+                    sleep(10000);
 
                     synchronized (this) {
                         bluetoothAdapter.stopLeScan(mLeScanCallback);

@@ -10,6 +10,7 @@ import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
@@ -26,7 +27,7 @@ import adapters.BtServicesAdapter;
 
 
 public class BtService extends Service {
-
+    // 蓝牙低功耗概览  https://developer.android.com/guide/topics/connectivity/bluetooth-le.html
     // 要在AndroidManifest.xml 里面添加 <service android:name=".BtService" android:enabled="true"/>
     private static final String TAG = BtService.class.getSimpleName();
 
