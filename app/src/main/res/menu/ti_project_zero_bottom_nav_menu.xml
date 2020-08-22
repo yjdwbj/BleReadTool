@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/fragment_iot"
+        android:enabled="true"
+        android:icon="@drawable/ic_settings_input_antenna_24px"
+        android:title="@string/text_IOT"/>
+    <item
+        android:id="@+id/fragment_led"
+        android:enabled="true"
+        android:icon="@drawable/ic_wb_incandescent_24px"
+        android:title="@string/text_LED"/>
+    <item
+        android:id="@+id/fragment_data"
+        android:enabled="true"
+        android:icon="@drawable/ic_edit_24px"
+        android:title="@string/text_DATA"/>
+    <item
+        android:id="@+id/fragment_key"
+        android:enabled="true"
+        android:icon="@drawable/ic_music_note_24px"
+        android:title="@string/text_BUTTON"/>
+</menu>

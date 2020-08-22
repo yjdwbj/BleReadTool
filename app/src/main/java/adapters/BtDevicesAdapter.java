@@ -10,34 +10,35 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import bt.lcy.btread.BtStaticVal;
 import bt.lcy.btread.R;
 
 public class BtDevicesAdapter extends BaseAdapter {
 
-
-
     private final LayoutInflater inflater;
     private final ArrayList<BluetoothDevice> btDevices;
-    private final HashMap<BluetoothDevice,Integer> rssiMap = new HashMap<>();
+    private final HashMap<BluetoothDevice,int[]> rssiMap = new HashMap<BluetoothDevice, int[]>();
     private boolean showProgressBar =false;
+    private static String TAG = BtDevicesAdapter.class.getName();
     private int showPBarPosition = -1;
 
-    public BtDevicesAdapter(Context context){
+    public  BtDevicesAdapter(Context context){
         btDevices = new ArrayList<>();
         inflater = LayoutInflater.from(context);
     }
 
-
-
-    public void addDevice(BluetoothDevice device,int rssi){
+    public void addDevice(BluetoothDevice device,int rssi,int company){
         if(!btDevices.contains(device)){
+            Log.i(TAG,"!!!!Device info "+ device.getAddress() + " , " + device.getName() + "," + device.getUuids());
             btDevices.add(device);
         }
-        rssiMap.put(device,rssi);
+        int [] val = {rssi,company};
+        rssiMap.put(device,val);
     }
 
     public BluetoothDevice getDevice(int pos){
@@ -64,35 +65,27 @@ public class BtDevicesAdapter extends BaseAdapter {
         return position;
     }
 
-    public void setProcessFlag(final  boolean flag)
-    {
-        showProgressBar = flag;
-        notifyDataSetChanged();
-    }
-
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder viewHolder;
+        int rssi = 0;
         if(convertView == null){
             convertView = inflater.inflate(R.layout.list_devices,null);
-
+            // 扫描后每一行的设备摘要信息。
             viewHolder = new ViewHolder();
             viewHolder.deviceAddress = (TextView)convertView.findViewById(R.id.device_address);
             viewHolder.deviceImage = (ImageView) convertView.findViewById(R.id.device_image);
             viewHolder.deviceName = (TextView)convertView.findViewById(R.id.device_name);
-            viewHolder.deviceRssi = (TextView)convertView.findViewById(R.id.device_rssi);
-            viewHolder.progressBar = (ProgressBar)convertView.findViewById(R.id.connection_progress) ;
+            viewHolder.deviceRssi = (TextView)convertView.findViewById(R.id.device_rssi_val);
+            viewHolder.deviceRssiImg = (ImageView) convertView.findViewById(R.id.device_rssi_img);
+            viewHolder.deviceCompany = (TextView) convertView.findViewById(R.id.device_company);
             convertView.setTag(viewHolder);
         }else{
             viewHolder = (ViewHolder)convertView.getTag();
         }
 
-        viewHolder.deviceImage.setVisibility(View.VISIBLE);
         final  boolean f = showProgressBar && convertView.isSelected();
-        viewHolder.progressBar.setVisibility( f ? View.VISIBLE : View.GONE);
-        viewHolder.progressBar.setMax(100);
-        if(f)
-            viewHolder.progressBar.setProgress(50);
+
 
         BluetoothDevice device = btDevices.get(position);
         final String deviceName = device.getName();
@@ -104,7 +97,25 @@ public class BtDevicesAdapter extends BaseAdapter {
         }
 
         viewHolder.deviceAddress.setText(device.getAddress());
-        viewHolder.deviceRssi.setText(" " + rssiMap.get(device) + " dBm");
+        int[] val = rssiMap.get(device);
+        rssi = val[0];
+        int company = val[1];
+        viewHolder.deviceCompany.setText(BtStaticVal.getCompany(company));
+        float sigStrenght  = (rssi + 100 ) * 2;
+        viewHolder.deviceRssi.setText(" " + rssi  + " dBm");
+
+        if(sigStrenght < 20){
+            viewHolder.deviceRssiImg.setImageResource(R.drawable.ic_signal_cellular_0_bar_24px);
+        }else if(sigStrenght < 40){
+            viewHolder.deviceRssiImg.setImageResource(R.drawable.ic_signal_cellular_1_bar_24px);
+        }else if(sigStrenght < 60){
+            viewHolder.deviceRssiImg.setImageResource(R.drawable.ic_signal_cellular_2_bar_24px);
+        }else if(sigStrenght < 80){
+            viewHolder.deviceRssiImg.setImageResource(R.drawable.ic_signal_cellular_3_bar_24px);
+        }else{
+            viewHolder.deviceRssiImg.setImageResource(R.drawable.ic_signal_cellular_4_bar_24px);
+        }
+
         return convertView;
     }
 
@@ -113,6 +124,7 @@ public class BtDevicesAdapter extends BaseAdapter {
         TextView deviceName;
         TextView deviceAddress;
         TextView deviceRssi;
-        ProgressBar progressBar;
+        TextView deviceCompany;
+        ImageView deviceRssiImg;
     }
 }

@@ -143,7 +143,6 @@ public class BtDeviceServicesActivity extends AppCompatActivity {
             ConsoleActivity.setCharacteristic(characteristic);
             ConsoleActivity.setBtService(btService);
 
-
             final Intent cmdIntent = new Intent(BtDeviceServicesActivity.this,ConsoleActivity.class);
             startActivity(cmdIntent);
             return true;
@@ -183,15 +182,10 @@ public class BtDeviceServicesActivity extends AppCompatActivity {
 
         expandableListView = (ExpandableListView) findViewById(R.id.list_services);
         expandableListView.setOnChildClickListener(childClickListener);
-
-
 //        Log.i(TAG,"BtDeviceService List ....... " + deviceAddress);
         getSupportActionBar().setTitle(deviceName);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        displayGattServices(btService.getSupportedGattServices());
-
-//        final Intent gattIntent = new Intent(this,BtService.class);
-//        bindService(gattIntent,serviceConnection,BIND_AUTO_CREATE);
+//        displayGattServices(btService.getSupportedGattServices());
 
     }
 
@@ -203,6 +197,15 @@ public class BtDeviceServicesActivity extends AppCompatActivity {
             final boolean result = btService.connect(deviceAddress);
             Log.i(TAG,"Connection request result=" + result);
         }
+    }
+
+    private static IntentFilter makeGattUpdateIntenFilter(){
+        final IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(BtService.ACTION_GATT_CONNECTED);
+        intentFilter.addAction(BtService.ACTION_GATT_DISCONNECTED);
+        intentFilter.addAction(BtService.ACTION_GATT_SERVICES_DISCOVERED);
+//        intentFilter.addAction(BtService.ACTION_DATA_AVAILABLE);
+        return intentFilter;
     }
 
     private void clearUI(){
@@ -224,13 +227,6 @@ public class BtDeviceServicesActivity extends AppCompatActivity {
     }
 
 
-    private static IntentFilter makeGattUpdateIntenFilter(){
-        final IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(BtService.ACTION_GATT_CONNECTED);
-        intentFilter.addAction(BtService.ACTION_GATT_DISCONNECTED);
-        intentFilter.addAction(BtService.ACTION_GATT_SERVICES_DISCOVERED);
-//        intentFilter.addAction(BtService.ACTION_DATA_AVAILABLE);
-        return intentFilter;
-    }
+
 
 }

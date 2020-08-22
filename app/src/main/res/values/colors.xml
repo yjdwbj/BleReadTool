@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
+<!--    颜色工具 https://www.material.io/resources/color/#!/?view.left=0&view.right=0&primary.color=4527A0-->
+<!--    自定义APP的颜色 -->
+    <color name="colorPrimary">#6200EE</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="listBackground">#b6c2b7</color>
+    <color name="materialPrimary">#6200EE</color>
+    <color name="colorPrimaryVariant">#3700B3</color>
+    <color name="colorSecondary">#03DAC6</color>
+    <color name="colorSecondaryVariant">#018786</color>
+    <color name="LightBlue">#e1f5fe</color>
+
+    <!--  来自于 https://www.material.io/develop/android/theming/color   -->
+    <color name="colorSecondaryAttr">?attr/colorSecondary</color>
 </resources>

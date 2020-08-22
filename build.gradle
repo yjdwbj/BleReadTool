@@ -3,22 +3,71 @@
 buildscript {
     
     repositories {
-        google()
+        google {
+            content {
+                includeGroupByRegex "com.android.*"
+                includeGroupByRegex "androidx.*"
+                includeGroupByRegex "android.arch.*"
+                includeGroupByRegex "com.google.*"
+            }
+        }
+        maven {
+            url 'https://maven.fabric.io/public'
+            content {
+                includeGroupByRegex "com.crashlytics.*"
+                includeGroupByRegex "io.fabric.*"
+            }
+        }
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.6.3'
+        // https://developer.android.com/studio/releases/gradle-plugin?hl=zh_cn
+        // 处理依赖问题可以参考 https://jasonatwood.io/archives/2033
+        classpath 'com.android.tools.build:gradle:4.0.1'
         // gradle-plugin:3.4.0 match gradle-5.1.1-all.zip
-        
+        // Provides ARCore Session and related resources.
+//        implementation 'com.google.ar:core:1.15.0'
+//
+//        // Provides ArFragment, and other UX resources.
+//        implementation 'com.google.ar.sceneform.ux:sceneform-ux:1.15.0'
+//
+//        // Alternatively, use ArSceneView without the UX dependency.
+//        implementation 'com.google.ar.sceneform:core:1.15.0'
+
+
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
+
     }
 }
 
 allprojects {
     repositories {
-        google()
+        google {
+            content {
+                includeGroupByRegex "com.android.*"
+                includeGroupByRegex "androidx.*"
+                includeGroupByRegex "android.arch.*"
+                includeGroupByRegex "com.google.*"
+            }
+        }
+        maven {
+            url "https://jitpack.io"
+            content {
+                includeGroupByRegex "com.github.PaulinaSadowska.*" // for RxWorkManagerObservers
+                includeGroupByRegex "com.github.andrzejchm.RESTMock"
+                includeGroupByRegex "com.github.chrisbanes"
+
+            }
+        }
+        maven {
+            url 'https://maven.google.com/'
+            content {
+                includeGroupByRegex "io.fabric.*"
+                includeGroupByRegex "com.crashlytics.*"
+            }
+        }
         jcenter()
     }
 }

@@ -31,6 +31,8 @@ import java.util.List;
 
 import adapters.ReadDataAdapter;
 
+import static android.bluetooth.BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT;
+
 public class ConsoleActivity extends AppCompatActivity {
 
     private final static String TAG = ConsoleActivity.class.getSimpleName();
@@ -157,8 +159,7 @@ public class ConsoleActivity extends AppCompatActivity {
                         return;
                     Log.i(TAG, "send  some things...............");
                     readDataAdapter.add(cmdLine.getText().toString());
-                    characteristic.setValue(cmdLine.getText().toString());
-                    btService.writeCharacteristic(characteristic);
+                    btService.writeCharacteristic(characteristic,cmdLine.getText().toString().getBytes(),WRITE_TYPE_DEFAULT);
                     cmdLine.setText("");
                 } else {
                     Log.i(TAG, " read some things..............." + sendRead.getText().toString());

@@ -66,4 +66,22 @@
     <string name="heart_rate">Heart Rate</string>
     <string name="blood_pressure">Blood Pressure</string>
     <string name="alert_notification_service">Alert Notification Service</string>
+    <string name="text_LED">RGB调色</string>
+    <string name="text_BUTTON">按键</string>
+    <string name="text_DATA">文本</string>
+    <string name="text_IOT">传感器</string>
+    <string name="hint_StringInput">请输入字符串</string>
+    <string name="rw_log">读写日志</string>
+
+<!--    传感器-->
+    <string name="iot_temp">温度</string>
+    <string name="iot_humi">湿度</string>
+    <string name="iot_pressure">气压</string>
+    <string name="iot_altitude">海拔</string>
+    <string name="iot_X">X:</string>
+    <string name="iot_Y">Y:</string>
+    <string name="iot_Z">Z:</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

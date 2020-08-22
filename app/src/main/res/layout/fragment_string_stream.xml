@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragments.StringStream">
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <TextView
+        android:id="@+id/log_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_margin="10dp"
+        android:background="@color/design_default_color_secondary_variant"
+        android:text="@string/rw_log"
+        android:textAlignment="center"
+        android:textColor="@android:color/white" />
+
+    <ScrollView
+        android:id="@+id/log_textarea"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/string_input"
+        android:layout_below="@id/log_title"
+        android:scrollbars="vertical"
+        android:fillViewport="true"
+        android:layout_margin="10dp">
+        <TextView
+            android:id="@+id/log_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:background="@color/design_default_color_secondary" />
+    </ScrollView>
+
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/string_input"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="20dp"
+        android:layout_toLeftOf="@id/send_string"
+        android:hint="@string/hint_StringInput"
+        android:tooltipText="@string/hint_StringInput" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/send_string"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="5dp"
+        android:text="@string/send" />
+</RelativeLayout>

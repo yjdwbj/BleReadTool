@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".fragments.LedRgbPicker">
+
+    <!-- TODO: Update blank fragment layout -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="25dp"
+        android:layout_gravity="center_vertical"
+        android:text="@string/text_LED" />
+    <LinearLayout
+        android:id="@+id/colorline"
+        android:layout_width="match_parent"
+        android:layout_margin="25dp"
+        android:layout_height="56dp"/>
+
+    <com.skydoves.colorpickerview.ColorPickerView
+        android:id="@+id/colorPickerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="26dp"
+        app:palette="@drawable/palette"
+        app:preferenceName="@string/text_LED"
+        android:rotation="-45"
+        alphaSlider="true"
+        app:selector="@drawable/wheel" />
+    <com.skydoves.colorpickerview.sliders.BrightnessSlideBar
+        android:id="@+id/brightnessSlideBar"
+        android:layout_width="match_parent"
+        app:selector_BrightnessSlider="@drawable/wheel"
+        app:borderSize_BrightnessSlider="10"
+        app:borderColor_BrightnessSlider="@android:color/background_light"
+        android:layout_gravity="bottom"
+        android:layout_margin="25dp"
+        android:layout_height="50dp"/>
+</FrameLayout>

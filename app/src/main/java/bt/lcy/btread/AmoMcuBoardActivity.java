@@ -22,6 +22,8 @@ import java.nio.ByteBuffer;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static android.bluetooth.BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT;
+
 
 public class AmoMcuBoardActivity extends AppCompatActivity {
 
@@ -62,7 +64,7 @@ public class AmoMcuBoardActivity extends AppCompatActivity {
         textAdc4 = (TextView)findViewById(R.id.text_adc4);
         textAdc5 = (TextView)findViewById(R.id.text_adc5);
 
-        btService.readCharateristic(btService.getAmoBoardCharacteristic(BtStaticVal.SYSTEM_ID));
+        btService.readCharateristic(btService.getCharacteristicByUUID(BtStaticVal.SYSTEM_ID));
 
         ((SeekBar)findViewById(R.id.seekBar)).setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -75,9 +77,8 @@ public class AmoMcuBoardActivity extends AppCompatActivity {
 
                 ByteBuffer bb = ByteBuffer.wrap(pwmValue);
                 textPwn.setText(Integer.toHexString(bb.getInt()));
-                final BluetoothGattCharacteristic characteristic = btService.getAmoBoardCharacteristic(BtStaticVal.UUID_CHARA);
-                characteristic.setValue(pwmValue);
-                btService.writeCharacteristic(characteristic);
+                final BluetoothGattCharacteristic characteristic = btService.getCharacteristicByUUID(BtStaticVal.UUID_CHARA);
+                btService.writeCharacteristic(characteristic,pwmValue,WRITE_TYPE_DEFAULT);
                 // 这里延时一下，避免发送得太快
                 try {
                     Thread.sleep(50);
@@ -101,7 +102,7 @@ public class AmoMcuBoardActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                btService.readCharateristic(btService.getAmoBoardCharacteristic(BtStaticVal.UUID_CHAR9));
+                btService.readCharateristic(btService.getCharacteristicByUUID(BtStaticVal.UUID_CHAR9));
             }
         });
 
@@ -110,7 +111,7 @@ public class AmoMcuBoardActivity extends AppCompatActivity {
          final CompoundButton.OnCheckedChangeListener onCheckedChangeListener = new CompoundButton.OnCheckedChangeListener() {
              @Override
              public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                 final BluetoothGattCharacteristic characteristic = btService.getAmoBoardCharacteristic(BtStaticVal.UUID_CHAR1);
+                 final BluetoothGattCharacteristic characteristic = btService.getCharacteristicByUUID(BtStaticVal.UUID_CHAR1);
                  final String text = buttonView.getText().toString();
                  if(text.equals(getResources().getString(R.string.led1)))
                  {
@@ -125,16 +126,13 @@ public class AmoMcuBoardActivity extends AppCompatActivity {
                      ledx_value[0] = isChecked ? (byte)0x44 : (byte)0x43;
                  }
 
-
-                 characteristic.setValue(ledx_value);
-
-                 btService.writeCharacteristic(characteristic);
+                 btService.writeCharacteristic(characteristic,ledx_value,WRITE_TYPE_DEFAULT);
                  try {
                      Thread.sleep(100);
                  } catch (InterruptedException e) {
                      e.printStackTrace();
                  }
-                 btService.writeCharacteristic(characteristic);
+                 btService.writeCharacteristic(characteristic,ledx_value,WRITE_TYPE_DEFAULT);
              }
          };
 
@@ -154,27 +152,26 @@ public class AmoMcuBoardActivity extends AppCompatActivity {
                 switchLed1.setChecked(false);
                 switchLed2.setChecked(false);
                 seekBar.setProgress(0);
-                final BluetoothGattCharacteristic characteristic = btService.getAmoBoardCharacteristic(BtStaticVal.UUID_CHARA);
-                characteristic.setValue(pwmValue);
-                btService.writeCharacteristic(characteristic);
+                final BluetoothGattCharacteristic characteristic = btService.getCharacteristicByUUID(BtStaticVal.UUID_CHARA);
+                btService.writeCharacteristic(characteristic,pwmValue,WRITE_TYPE_DEFAULT);
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                btService.writeCharacteristic(characteristic);
+                btService.writeCharacteristic(characteristic,pwmValue,WRITE_TYPE_DEFAULT);
             }
         });
 
 
 
-        btService.readCharateristic(btService.getAmoBoardCharacteristic(BtStaticVal.SYSTEM_ID));
+        btService.readCharateristic(btService.getCharacteristicByUUID(BtStaticVal.SYSTEM_ID));
         try {
             Thread.sleep(200);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        btService.readCharateristic(btService.getAmoBoardCharacteristic(BtStaticVal.SYSTEM_ID));
+        btService.readCharateristic(btService.getCharacteristicByUUID(BtStaticVal.SYSTEM_ID));
         btnReadAdc45.callOnClick();
 
 
@@ -244,7 +241,7 @@ public class AmoMcuBoardActivity extends AppCompatActivity {
 
     private void setSystemId()
     {
-        BluetoothGattCharacteristic characteristic =  btService.getAmoBoardCharacteristic(BtStaticVal.SYSTEM_ID);
+        BluetoothGattCharacteristic characteristic =  btService.getCharacteristicByUUID(BtStaticVal.SYSTEM_ID);
         Log.i(TAG,"read System ID......>");
         byte[] val = new byte[10];
         try{
@@ -274,9 +271,18 @@ public class AmoMcuBoardActivity extends AppCompatActivity {
             final boolean result = btService.connect();
             Log.d(TAG, "Connect request result=" + result);
         }
-        btService.setCharacteristicNotification(btService.getAmoBoardCharacteristic(BtStaticVal.UUID_CHAR4), true);
-
+        btService.setCharacteristicNotification(btService.getCharacteristicByUUID(BtStaticVal.UUID_CHAR4), true);
     }
+
+    private static IntentFilter makeGattUpdateIntenFilter(){
+        final IntentFilter intentFilter = new IntentFilter();
+//        intentFilter.addAction(BtService.ACTION_GATT_CONNECTED);
+        intentFilter.addAction(BtService.ACTION_GATT_DISCONNECTED);
+//        intentFilter.addAction(BtService.ACTION_GATT_SERVICES_DISCOVERED);
+        intentFilter.addAction(BtService.ACTION_DATA_AVAILABLE);
+        return intentFilter;
+    }
+
 
     @Override
     protected void onPause() {
@@ -290,7 +296,7 @@ public class AmoMcuBoardActivity extends AppCompatActivity {
         readAdcTimer.cancel();
 
         if(btService != null) {
-            btService.setCharacteristicNotification(btService.getAmoBoardCharacteristic(BtStaticVal.UUID_CHAR4), false);
+            btService.setCharacteristicNotification(btService.getCharacteristicByUUID(BtStaticVal.UUID_CHAR4), false);
             btService.onDestroy();
             btService = null;
         }
@@ -307,7 +313,7 @@ public class AmoMcuBoardActivity extends AppCompatActivity {
     @SuppressLint("StringFormatInvalid")
     private void updateAdc45Value()
     {
-        final BluetoothGattCharacteristic characteristic= btService.getAmoBoardCharacteristic(BtStaticVal.UUID_CHAR9);
+        final BluetoothGattCharacteristic characteristic= btService.getCharacteristicByUUID(BtStaticVal.UUID_CHAR9);
 
         byte[] adc45 = new byte[4];
         try{
@@ -338,7 +344,7 @@ public class AmoMcuBoardActivity extends AppCompatActivity {
 
     private void updateTempAndHumidity(final String uuid)
     {
-        final BluetoothGattCharacteristic characteristic= btService.getAmoBoardCharacteristic(uuid);
+        final BluetoothGattCharacteristic characteristic= btService.getCharacteristicByUUID(uuid);
 
         ByteBuffer wrapped = null;
         try{
@@ -361,15 +367,6 @@ public class AmoMcuBoardActivity extends AppCompatActivity {
             }
         });
 
-    }
-
-    private static IntentFilter makeGattUpdateIntenFilter(){
-        final IntentFilter intentFilter = new IntentFilter();
-//        intentFilter.addAction(BtService.ACTION_GATT_CONNECTED);
-        intentFilter.addAction(BtService.ACTION_GATT_DISCONNECTED);
-//        intentFilter.addAction(BtService.ACTION_GATT_SERVICES_DISCOVERED);
-        intentFilter.addAction(BtService.ACTION_DATA_AVAILABLE);
-        return intentFilter;
     }
 
 

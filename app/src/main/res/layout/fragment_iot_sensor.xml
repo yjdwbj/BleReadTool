@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?><!--  相对布局很强大。   https://developer.android.com/guide/topics/ui/layout/relative-->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    tools:context=".fragments.IotSensor">
+    <!--        https://source.android.com/devices/graphics/arch-sv-glsv-->
+    <!--   从GLSurfaceView继承一个自定的平面控件  -->
+    <lcy.gles3d.IotGLSurfaceView
+        android:id="@+id/glsurfaceview"
+        android:layout_width="match_parent"
+        android:layout_height="520dp"
+        android:layout_centerVertical="true"
+        android:hardwareAccelerated="true" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/iot_X"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/glsurfaceview"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:gravity="bottom"
+        android:layout_toLeftOf="@id/iot_Y"
+        android:hint="@string/iot_X">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/iot_input_x"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:editable="false" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/iot_Y"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/glsurfaceview"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:hint="@string/iot_Y">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/iot_input_y"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:editable="false" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/iot_Z"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/glsurfaceview"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@id/iot_Y"
+        android:layout_toEndOf="@id/iot_Y"
+        android:hint="@string/iot_Z">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/iot_input_z"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:editable="false" />
+    </com.google.android.material.textfield.TextInputLayout>
+    <!-- TODO: Update blank fragment layout -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/iot_temp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@id/iot_pressure"
+        android:layout_above="@id/glsurfaceview"
+        android:hint="@string/iot_temp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/iot_edit_temp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:editable="false" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/iot_pressure"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@id/glsurfaceview"
+        android:layout_alignParentTop="true"
+        android:hint="@string/iot_pressure">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/iot_edit_humi"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:editable="false" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/iot_altitude"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_above="@id/glsurfaceview"
+        android:layout_toRightOf="@id/iot_pressure"
+        android:layout_toEndOf="@id/iot_pressure"
+        android:hint="@string/iot_altitude">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/iot_edit_altitude"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:editable="false" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+</RelativeLayout>
