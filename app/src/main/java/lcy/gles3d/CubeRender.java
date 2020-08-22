@@ -136,7 +136,7 @@ public class CubeRender implements GLSurfaceView.Renderer {
     {
         if( cube != null) {
             Matrix4f camera2 = new Matrix4f();
-            camera2.translate(0,0,-5.0f);
+            camera2.translate(0,0,-5f);
             cube.setCamera(camera2);
             cube.updateXYZ(x,y,z);
             if(LoggerConfig.ON){

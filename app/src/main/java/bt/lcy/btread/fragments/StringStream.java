@@ -57,8 +57,8 @@ public class StringStream extends Fragment {
     private boolean write_no_resp = false;
     private TextInputEditText textInputEditText;
 
-    private GattManager mGattManager;
-    private BluetoothDevice mDevice;
+    private static GattManager mGattManager;
+    private static  BluetoothDevice mDevice;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -66,8 +66,9 @@ public class StringStream extends Fragment {
 
     TiMsp432ProjectZeroActivity mActivity;
 
-    public StringStream() {
-        // Required empty public constructor
+    public  StringStream(GattManager manager, BluetoothDevice btdevice) {
+        mGattManager = manager;
+        mDevice = btdevice;
     }
 
     public void setActivity(TiMsp432ProjectZeroActivity activity) {
@@ -84,7 +85,7 @@ public class StringStream extends Fragment {
      */
     // TODO: Rename and change types and number of parameters
     public static StringStream newInstance(String param1, String param2) {
-        StringStream fragment = new StringStream();
+        StringStream fragment = new StringStream(mGattManager,mDevice);
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -192,8 +193,5 @@ public class StringStream extends Fragment {
 
     }
 
-    public void setBluetoothGatt(GattManager manager, BluetoothDevice btdevice) {
-        mGattManager = manager;
-        mDevice = btdevice;
-    }
+
 }

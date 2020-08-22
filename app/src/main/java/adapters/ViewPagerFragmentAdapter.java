@@ -48,26 +48,22 @@ public class ViewPagerFragmentAdapter extends FragmentStateAdapter {
     public Fragment createFragment(int position) {
         switch (position) {
             case 0:
-                IotSensor  iotSensor  = new IotSensor();
-                iotSensor.setBluetoothGatt(parentActivity.getGattManager(),parentActivity.getDevice());
+                IotSensor  iotSensor  = new IotSensor(parentActivity.getGattManager(),parentActivity.getDevice());
                 return iotSensor;
             case 1:
 
-                ButtonFragment buttonFragment = new ButtonFragment();
-                buttonFragment.setBluetoothGatt(parentActivity.getGattManager(),parentActivity.getDevice());
+                ButtonFragment buttonFragment = new ButtonFragment(parentActivity.getGattManager(),parentActivity.getDevice());
                 return buttonFragment;
             case 2:
 
-                LedRgbPicker  ledRgbPicker= new LedRgbPicker();
-                ledRgbPicker.setBluetoothGatt(parentActivity.getGattManager(),parentActivity.getDevice());
+                LedRgbPicker  ledRgbPicker= new LedRgbPicker(parentActivity.getGattManager(),parentActivity.getDevice());
                 return ledRgbPicker;
             case 3:
-                 StringStream stringStream = new StringStream();
-                 stringStream.setBluetoothGatt(parentActivity.getGattManager(),parentActivity.getDevice());
+                 StringStream stringStream = new StringStream(parentActivity.getGattManager(),parentActivity.getDevice());
                 return stringStream;
 
         }
-        return new LedRgbPicker();
+        return new LedRgbPicker(parentActivity.getGattManager(),parentActivity.getDevice());
     }
 
     @Override

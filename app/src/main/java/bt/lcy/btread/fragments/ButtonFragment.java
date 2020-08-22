@@ -52,8 +52,8 @@ public class ButtonFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
     private static final String TAG = ButtonFragment.class.getName();
 
-    private GattManager mGattManager;
-    private BluetoothDevice mDevice;
+    private static GattManager mGattManager;
+    private static BluetoothDevice mDevice;
 
     private ToneGenerator button1ToneRun;
     private ToneGenerator button2ToneRun;
@@ -64,8 +64,10 @@ public class ButtonFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    public ButtonFragment() {
-        // Required empty public constructor
+
+    public ButtonFragment(GattManager manager, BluetoothDevice btdevice) {
+        mGattManager = manager;
+        mDevice = btdevice;
         button1ToneRun = new ToneGenerator(AudioManager.STREAM_VOICE_CALL, 90);
         button2ToneRun = new ToneGenerator(AudioManager.STREAM_VOICE_CALL, 80);
     }
@@ -80,7 +82,7 @@ public class ButtonFragment extends Fragment {
      */
     // TODO: Rename and change types and number of parameters
     public static ButtonFragment newInstance(String param1, String param2) {
-        ButtonFragment fragment = new ButtonFragment();
+        ButtonFragment fragment = new ButtonFragment(mGattManager,mDevice);
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -157,9 +159,6 @@ public class ButtonFragment extends Fragment {
 
     }
 
-    public void setBluetoothGatt(GattManager manager, BluetoothDevice btdevice) {
-        mGattManager = manager;
-        mDevice = btdevice;
-    }
+
 
 }

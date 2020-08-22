@@ -54,8 +54,8 @@ public class LedRgbPicker extends Fragment {
     private static final String TAG = LedRgbPicker.class.getName();
 
 
-    private GattManager mGattManager;
-    private BluetoothDevice mDevice;
+    private static GattManager mGattManager;
+    private static BluetoothDevice mDevice;
     private boolean tx_reday_falg = true;
 
     // TODO: Rename and change types of parameters
@@ -64,8 +64,9 @@ public class LedRgbPicker extends Fragment {
 
     ColorPickerView colorPickerView;
 
-    public LedRgbPicker() {
-        // Required empty public constructor
+    public  LedRgbPicker(GattManager manager, BluetoothDevice btdevice) {
+        mGattManager = manager;
+        mDevice = btdevice;
     }
 
     /**
@@ -78,7 +79,7 @@ public class LedRgbPicker extends Fragment {
      */
     // TODO: Rename and change types and number of parameters
     public static LedRgbPicker newInstance(String param1, String param2) {
-        LedRgbPicker fragment = new LedRgbPicker();
+        LedRgbPicker fragment = new LedRgbPicker(mGattManager,mDevice);
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -162,10 +163,7 @@ public class LedRgbPicker extends Fragment {
         return data;
     }
 
-    public void setBluetoothGatt(GattManager manager, BluetoothDevice btdevice) {
-        mGattManager = manager;
-        mDevice = btdevice;
-    }
+
 
 
 }

@@ -48,8 +48,8 @@ public class IotSensor extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    private GattManager mGattManager;
-    private BluetoothDevice mDevice;
+    private static GattManager mGattManager;
+    private static BluetoothDevice mDevice;
     private TextInputEditText temp;
     private TextInputEditText  humi;
     private TextInputEditText alt;
@@ -68,7 +68,9 @@ public class IotSensor extends Fragment {
     private URI paramUri;
 
 
-    public IotSensor() {
+    public IotSensor(GattManager manager, BluetoothDevice btdevice) {
+        mGattManager = manager;
+        mDevice = btdevice;
         // Required empty public constructor
     }
 
@@ -82,7 +84,7 @@ public class IotSensor extends Fragment {
      */
     // TODO: Rename and change types and number of parameters
     public static IotSensor newInstance(String param1, String param2) {
-        IotSensor fragment = new IotSensor();
+        IotSensor fragment = new IotSensor(mGattManager,mDevice);
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -93,7 +95,6 @@ public class IotSensor extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        gLView = null;
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -237,10 +238,7 @@ public class IotSensor extends Fragment {
         }
     }
 
-    public void setBluetoothGatt(GattManager manager, BluetoothDevice btdevice) {
-        mGattManager = manager;
-        mDevice = btdevice;
-    }
+
 }
 
 
