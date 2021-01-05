@@ -63,6 +63,7 @@ public class BtService extends Service {
     // 要在AndroidManifest.xml 里面添加 <service android:name=".BtService" android:enabled="true"/>
     private static final String TAG = BtService.class.getSimpleName();
     public static final int GATT_AUTH_FAIL = 137;
+    public static List<BluetoothGattService> mDeviceServices;
 
 
     private BluetoothGatt bluetoothGatt;
@@ -303,13 +304,13 @@ public class BtService extends Service {
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
 //            super.onServicesDiscovered(gatt, status);
 //            Log.i(TAG, "!!!!!!!!!!!! onServicesDiscoverd received: " + status);
-            if (status == GATT_SUCCESS) {
-                // 发现服务后，遍历服务与特征。
-                checkServiceList();
-                broadcastUpdate(ACTION_GATT_SERVICES_DISCOVERED);
-            } else {
-                Log.w(TAG, "onServicesDiscoverd received: " + status);
-            }
+//            if (status == GATT_SUCCESS) {
+//                // 发现服务后，遍历服务与特征。
+//                checkServiceList();
+//                broadcastUpdate(ACTION_GATT_SERVICES_DISCOVERED);
+//            } else {
+//                Log.w(TAG, "onServicesDiscoverd received: " + status);
+//            }
         }
 
 
@@ -445,46 +446,46 @@ public class BtService extends Service {
     }
 
 
-    private void checkServiceList() {
-        // 遍历 GATT 服务器上的服务与特征。
-        for (final BluetoothGattService service : bluetoothGatt.getServices()) {
-            String uuid = service.getUuid().toString();
-//            Log.i(TAG,"@@@@@@@@@@@check Device services.... " + uuid);
-            if (BtStaticVal.DEVICE_INFORMATION_SERVICE.equals(uuid.substring(0, 8)) ||
-                    BtStaticVal.GENERIC_ACCESS_UUID.equals(uuid.substring(0, 8))) {
-                for (final BluetoothGattCharacteristic bc : service.getCharacteristics()) {
-                    uuid = bc.getUuid().toString();
-//                    Log.i(TAG,"@@@@@@@@@@@check Device service.getCharacteristics.... " + bc.getUuid().toString());
-                    if (BtStaticVal.SRV_SYSTEM_ID.equals(uuid.substring(0, 8))) {
-                        userCharacterMap.put(bc.getUuid().toString(), bc);
-                    }else if(BtStaticVal.SRV_DEVICE_NAME.equals(uuid.substring(0, 8))){
-                        userCharacterMap.put(bc.getUuid().toString(), bc);
-                    }
-                }
-            }else if (BtStaticVal.UUID_KEY_DATA.equals(uuid)) {
-                isAmoBoard = true;
-//                Log.i(TAG,"!!!!!-> isAmoBoard  uuid is: " + BtStaticVal.UUID_KEY_DATA);
-                for (final BluetoothGattCharacteristic bc : service.getCharacteristics())
-                    userCharacterMap.put(bc.getUuid().toString(), bc);
-                break;
-            }else  if (TiMsp432ProjectZeroActivity.isVaildUUID(uuid)) {
-                isTiProjectZero = true;
-                for (final BluetoothGattCharacteristic bc : service.getCharacteristics()){
-                    // 列出所有的UUID。
-                    userCharacterMap.put(bc.getUuid().toString(), bc);
-                    StringBuilder property = new StringBuilder();
-                    int ps = bc.getProperties();
-                    property.append(" w: " + (( ps & BluetoothGattCharacteristic.PROPERTY_READ) != 0 ? "true" : "false"));
-                    property.append(" ,r: " + (( ps & BluetoothGattCharacteristic.PROPERTY_WRITE) != 0 ? "true" : "false"));
-                    property.append(" ,n: " + (( ps & PROPERTY_NOTIFY) != 0 ? "true" : "false"));
-                    property.append(" ,wn: " + (( ps & BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE) != 0 ? "true" : "false"));
-                    property.append(" ,sw: " + (( ps & BluetoothGattCharacteristic.PROPERTY_SIGNED_WRITE) != 0 ? "true" : "false"));
-                    Log.i(TAG,"!!!!!-> uuid is: " + bc.getUuid().toString() + ", property : " + property);
-                }
-            }
-        }
-
-    }
+//    private void checkServiceList() {
+//        // 遍历 GATT 服务器上的服务与特征。
+//        for (final BluetoothGattService service : bluetoothGatt.getServices()) {
+//            String uuid = service.getUuid().toString();
+////            Log.i(TAG,"@@@@@@@@@@@check Device services.... " + uuid);
+//            if (BtStaticVal.DEVICE_INFORMATION_SERVICE.equals(uuid.substring(0, 8)) ||
+//                    BtStaticVal.GENERIC_ACCESS_UUID.equals(uuid.substring(0, 8))) {
+//                for (final BluetoothGattCharacteristic bc : service.getCharacteristics()) {
+//                    uuid = bc.getUuid().toString();
+////                    Log.i(TAG,"@@@@@@@@@@@check Device service.getCharacteristics.... " + bc.getUuid().toString());
+//                    if (BtStaticVal.SRV_SYSTEM_ID.equals(uuid.substring(0, 8))) {
+//                        userCharacterMap.put(bc.getUuid().toString(), bc);
+//                    }else if(BtStaticVal.SRV_DEVICE_NAME.equals(uuid.substring(0, 8))){
+//                        userCharacterMap.put(bc.getUuid().toString(), bc);
+//                    }
+//                }
+//            }else if (BtStaticVal.UUID_KEY_DATA.equals(uuid)) {
+//                isAmoBoard = true;
+////                Log.i(TAG,"!!!!!-> isAmoBoard  uuid is: " + BtStaticVal.UUID_KEY_DATA);
+//                for (final BluetoothGattCharacteristic bc : service.getCharacteristics())
+//                    userCharacterMap.put(bc.getUuid().toString(), bc);
+//                break;
+//            }else  if (TiMsp432ProjectZeroActivity.isVaildUUID(uuid)) {
+//                isTiProjectZero = true;
+//                for (final BluetoothGattCharacteristic bc : service.getCharacteristics()){
+//                    // 列出所有的UUID。
+//                    userCharacterMap.put(bc.getUuid().toString(), bc);
+//                    StringBuilder property = new StringBuilder();
+//                    int ps = bc.getProperties();
+//                    property.append(" w: " + (( ps & BluetoothGattCharacteristic.PROPERTY_READ) != 0 ? "true" : "false"));
+//                    property.append(" ,r: " + (( ps & BluetoothGattCharacteristic.PROPERTY_WRITE) != 0 ? "true" : "false"));
+//                    property.append(" ,n: " + (( ps & PROPERTY_NOTIFY) != 0 ? "true" : "false"));
+//                    property.append(" ,wn: " + (( ps & BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE) != 0 ? "true" : "false"));
+//                    property.append(" ,sw: " + (( ps & BluetoothGattCharacteristic.PROPERTY_SIGNED_WRITE) != 0 ? "true" : "false"));
+//                    Log.i(TAG,"!!!!!-> uuid is: " + bc.getUuid().toString() + ", property : " + property);
+//                }
+//            }
+//        }
+//
+//    }
 
     /**
      * Complete the disconnect after getting connectionstate == disconnected
@@ -554,7 +555,7 @@ public class BtService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        deviceAddress = intent.getStringExtra(BtDeviceServicesActivity.EXTRAS_DEVICE_ADDR);
+//        deviceAddress = intent.getStringExtra(BtDeviceServicesActivity.EXTRAS_DEVICE_ADDR);
         return mBinder;
     }
 

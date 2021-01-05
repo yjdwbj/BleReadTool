@@ -7,37 +7,29 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.viewpager2.widget.ViewPager2;
 
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.TableLayout;
 import android.widget.TextView;
 
-import com.google.android.material.tabs.TabLayout;
-import com.google.android.material.tabs.TabLayoutMediator;
 import com.skydoves.colorpickerview.AlphaTileView;
 import com.skydoves.colorpickerview.ColorEnvelope;
 import com.skydoves.colorpickerview.ColorPickerView;
 import com.skydoves.colorpickerview.flag.FlagView;
 import com.skydoves.colorpickerview.listeners.ColorEnvelopeListener;
-import com.skydoves.colorpickerview.listeners.ColorListener;
 import com.skydoves.colorpickerview.sliders.BrightnessSlideBar;
 
 import java.util.UUID;
 
-import adapters.ViewPagerFragmentAdapter;
-import bt.lcy.btread.BtStaticVal;
 import bt.lcy.btread.R;
-import bt.lcy.btread.TiMsp432ProjectZeroActivity;
 import bt.lcy.gatt.GattManager;
-import bt.lcy.gatt.operation.GattCharacteristicWriteOperation;
+import bt.lcy.gatt.operations.GattCharacteristicWriteOperation;
 
-import static com.skydoves.colorpickerview.ActionMode.ALWAYS;
+import static bt.lcy.btread.TiMsp432ProjectZeroActivity.UUID_TI_PROJECT_ZERO_LED_CHAR;
+import static bt.lcy.btread.TiMsp432ProjectZeroActivity.UUID_TI_PROJECT_ZERO_LED_SERIVCE;
 import static com.skydoves.colorpickerview.ActionMode.LAST;
 
 /**
@@ -45,7 +37,7 @@ import static com.skydoves.colorpickerview.ActionMode.LAST;
  * Use the {@link LedRgbPicker#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class LedRgbPicker extends Fragment {
+public class LedRgbPicker extends ItemFragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -137,8 +129,8 @@ public class LedRgbPicker extends Fragment {
                 byte[] value = hexStringToByteArray(hexColor.substring(2,hexColor.length()));
                 if(tx_reday_falg){
                     mGattManager.queue(new GattCharacteristicWriteOperation(
-                            mDevice, UUID.fromString(BtStaticVal.UUID_TI_PROJECT_ZERO_LED_SERIVCE),
-                            UUID.fromString(BtStaticVal.UUID_TI_PROJECT_ZERO_LED_CHAR),value));
+                            mDevice, UUID.fromString(UUID_TI_PROJECT_ZERO_LED_SERIVCE),
+                            UUID.fromString(UUID_TI_PROJECT_ZERO_LED_CHAR),value));
                     tx_reday_falg = false;
                     new Handler().postDelayed(
                             new Runnable() {

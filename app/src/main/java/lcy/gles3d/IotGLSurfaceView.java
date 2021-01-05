@@ -17,22 +17,17 @@ import java.nio.ShortBuffer;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-public class IotGLSurfaceView  extends GLSurfaceView {
-    private final float TOUCH_SCALE_FACTOR = 180.0f/320;//角度缩放比例
+public class IotGLSurfaceView extends GLSurfaceView {
     private static final String TAG = IotGLSurfaceView.class.getName();
-
     private float previousX;
     private float previousY;
 
-
-//    private TriangleRenderer renderer;
+    //    private TriangleRenderer renderer;
     private CubeRender renderer;
 //      private SimpleTextureCube renderer;
 
-
-
-    public IotGLSurfaceView(Context context, AttributeSet attributeSet){
-        super(context,attributeSet);
+    public IotGLSurfaceView(Context context, AttributeSet attributeSet) {
+        super(context, attributeSet);
         setEGLContextClientVersion(2);
 //        renderer = new TriangleRenderer();
 //        setPreserveEGLContextOnPause(true);
@@ -68,7 +63,7 @@ public class IotGLSurfaceView  extends GLSurfaceView {
 //                    }
 //                });
 
-                Log.i(TAG,"ACTION_MOVE: x " + x + " y: " + y);
+                Log.i(TAG, "ACTION_MOVE: x " + x + " y: " + y);
 //                renderer.setAngle(renderer.getAngle() + (dx+dy) * TOUCH_SCALE_FACTOR );
 //                requestRender();
         }
@@ -77,13 +72,8 @@ public class IotGLSurfaceView  extends GLSurfaceView {
         return true;
     }
 
-    public  void updateXYZ(float x,float y,float z){
-        renderer.updateXYZ(x,y,z);
+    public void updateXYZ(float x, float y, float z) {
+        renderer.updateXYZ(x, y, z);
         requestRender();
     }
-
-
-
-
-
 }

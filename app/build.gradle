@@ -59,14 +59,18 @@ dependencies {
 //    def fragment_version = "1.2.5"
 //    implementation "androidx.fragment:fragment:$fragment_version"
 //    debugImplementation "androidx.fragment:fragment-testing:$fragment_version"
+    def room_version = "2.2.5"
+
+    implementation "androidx.room:room-runtime:$room_version"
+    annotationProcessor "androidx.room:room-compiler:$room_version"
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     // AndroidX 版本 https://developer.android.google.cn/jetpack/androidx/versions?hl=zh-cn
     // 新的AndroidX 命名空间。  https://developer.android.google.cn/jetpack/androidx?hl=zh-cn
     implementation 'com.android.support:design:28.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-    implementation 'androidx.appcompat:appcompat:1.3.0-alpha0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    implementation 'androidx.appcompat:appcompat:1.3.0-alpha02'
 
     // viewpage2 支持 https://developer.android.com/jetpack/androidx/releases/viewpager2#androidx-deps
     implementation "androidx.viewpager2:viewpager2:1.0.0"
@@ -79,8 +83,8 @@ dependencies {
 //    implementation 'org.jetbrains:annotations:19.0.0'
 
 
-    androidTestImplementation 'androidx.test:runner:1.2.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    androidTestImplementation 'androidx.test:runner:1.3.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 //    debugImplementation "androidx.fragment:fragment-testing:1.3.0"
 //    implementation('com.jakewharton.timber:timber:4.7.1') {
 //        exclude group: "org.jetbrains", module: "core"
@@ -91,31 +95,31 @@ dependencies {
      * https://android.jlelse.eu/material-design-for-android-523996401fc1
      * Introduction to Upcoming AndroidX with Material Components https://blog.yudiz.com/introduction-to-upcoming-androidx-with-material-components/
      */
-    implementation 'com.google.android.material:material:1.2.0'
+    implementation 'com.google.android.material:material:1.2.1'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.lifecycle:lifecycle-extensions:2.1.0'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation 'com.android.support:support-annotations:28.0.0'
     // 测试部分  https://developer.android.com/training/testing/set-up-project
     // Core library
-    androidTestImplementation 'androidx.test:core:1.2.0'
+    androidTestImplementation 'androidx.test:core:1.3.0'
 
     // AndroidJUnitRunner and JUnit Rules
-    androidTestImplementation 'androidx.test:runner:1.2.0'
-    androidTestImplementation 'androidx.test:rules:1.2.0'
+    androidTestImplementation 'androidx.test:runner:1.3.0'
+    androidTestImplementation 'androidx.test:rules:1.3.0'
 
     // Assertions
-    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
-    androidTestImplementation 'androidx.test.ext:truth:1.2.0'
-    androidTestImplementation 'com.google.truth:truth:1.0.1'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.ext:truth:1.3.0'
+    androidTestImplementation 'com.google.truth:truth:1.1'
 
     // Espresso dependencies
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-contrib:3.2.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-intents:3.2.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-accessibility:3.2.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-web:3.2.0'
-    androidTestImplementation 'androidx.test.espresso.idling:idling-concurrent:3.2.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-contrib:3.3.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-intents:3.3.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-accessibility:3.3.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-web:3.3.0'
+    androidTestImplementation 'androidx.test.espresso.idling:idling-concurrent:3.3.0'
 
     // The following Espresso dependency can be either "implementation"
     // or "androidTestImplementation", depending on whether you want the

@@ -18,32 +18,37 @@ import android.view.ViewGroup;
 
 import com.google.android.material.textfield.TextInputEditText;
 
+import java.io.InterruptedIOException;
 import java.net.URI;
 import java.util.UUID;
 
-import bt.lcy.btread.BtStaticVal;
 import bt.lcy.btread.R;
 import bt.lcy.gatt.CharacteristicChangeListener;
 import bt.lcy.gatt.GattManager;
 import bt.lcy.gatt.GattOperationBundle;
-import bt.lcy.gatt.operation.GattSetNotificationOperation;
+import bt.lcy.gatt.operations.GattSetNotificationOperation;
 import lcy.gles3d.IotGLSurfaceView;
+
+import static bt.lcy.btread.BtStaticVal.CCC_DESCRIPTOR_UUID;
+import static bt.lcy.btread.TiMsp432ProjectZeroActivity.UUID_TI_PROJECT_ZERO_DATA;
+import static bt.lcy.btread.TiMsp432ProjectZeroActivity.UUID_TI_PROJECT_ZERO_DATA_BMP180;
+import static bt.lcy.btread.TiMsp432ProjectZeroActivity.UUID_TI_PROJECT_ZERO_DATA_HMC5883L;
 
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link IotSensor#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class IotSensor extends Fragment {
+public class IotSensor extends ItemFragment {
 
     // https://guides.codepath.com/android/creating-and-using-fragments
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    private static final double  PRESSURE_OF_SEA = 101325.0;
+    private static final double PRESSURE_OF_SEA = 101325.0;
 
-    private  static final String TAG = IotSensor.class.getName();
+    private static final String TAG = IotSensor.class.getName();
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -51,10 +56,10 @@ public class IotSensor extends Fragment {
     private static GattManager mGattManager;
     private static BluetoothDevice mDevice;
     private TextInputEditText temp;
-    private TextInputEditText  humi;
+    private TextInputEditText humi;
     private TextInputEditText alt;
 
-    private TextInputEditText aX,aY,aZ;
+    private TextInputEditText aX, aY, aZ;
 
     private IotGLSurfaceView gLView;
     //        private ModelViewerGUI gui;
@@ -84,7 +89,7 @@ public class IotSensor extends Fragment {
      */
     // TODO: Rename and change types and number of parameters
     public static IotSensor newInstance(String param1, String param2) {
-        IotSensor fragment = new IotSensor(mGattManager,mDevice);
+        IotSensor fragment = new IotSensor(mGattManager, mDevice);
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -107,14 +112,15 @@ public class IotSensor extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
-        return  inflater.inflate(R.layout.fragment_iot_sensor, container, false);
+        return inflater.inflate(R.layout.fragment_iot_sensor, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         view.setVisibility(View.VISIBLE);
-        float []mMMatrix = new float[16];
+//        view.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        float[] mMMatrix = new float[16];
         // openGL ES 参考： https://developer.android.com/guide/topics/graphics/opengl#gl-extension-query
 
         humi = view.findViewById(R.id.iot_edit_humi);
@@ -127,90 +133,87 @@ public class IotSensor extends Fragment {
         aZ = view.findViewById(R.id.iot_input_z);
 
 
-
         gLView = view.findViewById(R.id.glsurfaceview);
-
-//        SceneRenderer renderer = new SceneRenderer();
-//        AirHockeyRenderer renderer = new AirHockeyRenderer(getContext());
-//        MyGLRenderer renderer = new MyGLRenderer();
-//        gLView.setRenderer(renderer);
 
         GattOperationBundle hmc5883 = new GattOperationBundle();
         hmc5883.addOperation(new GattSetNotificationOperation(
-                mDevice, UUID.fromString(BtStaticVal.UUID_TI_PROJECT_ZERO_DATA),
-                UUID.fromString(BtStaticVal.UUID_TI_PROJECT_ZERO_DATA_HMC5883L),
-                UUID.fromString(BtStaticVal.CCC_DESCRIPTOR_UUID),
+                mDevice, UUID.fromString(UUID_TI_PROJECT_ZERO_DATA),
+                UUID.fromString(UUID_TI_PROJECT_ZERO_DATA_HMC5883L),
+                UUID.fromString(CCC_DESCRIPTOR_UUID),
                 true
         ));
         mGattManager.queue(hmc5883);
         GattOperationBundle bmp180 = new GattOperationBundle();
         bmp180.addOperation(new GattSetNotificationOperation(
-                mDevice, UUID.fromString(BtStaticVal.UUID_TI_PROJECT_ZERO_DATA),
-                UUID.fromString(BtStaticVal.UUID_TI_PROJECT_ZERO_DATA_BMP180),
-                UUID.fromString(BtStaticVal.CCC_DESCRIPTOR_UUID),
+                mDevice, UUID.fromString(UUID_TI_PROJECT_ZERO_DATA),
+                UUID.fromString(UUID_TI_PROJECT_ZERO_DATA_BMP180),
+                UUID.fromString(CCC_DESCRIPTOR_UUID),
                 true
         ));
         mGattManager.queue(bmp180);
 
-        mGattManager.addCharacteristicChangeListener(UUID.fromString(BtStaticVal.UUID_TI_PROJECT_ZERO_DATA_HMC5883L),
+        mGattManager.addCharacteristicChangeListener(UUID.fromString(UUID_TI_PROJECT_ZERO_DATA_HMC5883L),
                 new CharacteristicChangeListener() {
-            @Override
-            public void onCharacteristicChanged(String deviceAddress, BluetoothGattCharacteristic characteristic) {
-                byte [] raw = characteristic.getValue();
-                String val = String.format("%02x %02x %02x %02x %02x %02x",raw[0],raw[1],raw[2],raw[3],raw[4],raw[5]);
-                float x = raw[0] << 8 | raw[1];
-                float z = raw[2] << 8 | raw[3];
-                float y = raw[4] << 8 | raw[5];
-
-                if(x > 0x7fff)
-                    x-=0xffff;
-                if(y > 0x7fff)
-                    y-=0xffff;
-                if(z > 0x7fff)
-                    z-=0xffff;
-
-                final float xx =x;
-                final float yy =y;
-                final float zz =z;
-                ((AppCompatActivity)view.getContext()).runOnUiThread(new Runnable() {
                     @Override
-                    public void run() {
-                        aX.setText(String.format("%.2f",xx));
-                        aY.setText(String.format("%.2f",yy));
-                        aZ.setText(String.format("%.2f",zz));
+                    public void onCharacteristicChanged(String deviceAddress, BluetoothGattCharacteristic characteristic) {
+                        final byte[] raw = characteristic.getValue();
+                        final float xx = raw[0] << 8 | raw[1];
+                        final float yy = raw[4] << 8 | raw[5];
+                        final float zz = raw[2] << 8 | raw[3];
+                        ((AppCompatActivity) view.getContext()).runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                aX.setText(String.format("%.2f", xx));
+                                aY.setText(String.format("%.2f", yy));
+                                aZ.setText(String.format("%.2f", zz));
+                            }
+                        });
+
+                        if (gLView != null) {
+                            gLView.queueEvent(new Runnable() {
+                                @Override
+                                public void run() {
+                                    float x = raw[0] << 8 | raw[1];
+                                    float z = raw[2] << 8 | raw[3];
+                                    float y = raw[4] << 8 | raw[5];
+
+                                    if (x > 0x7fff)
+                                        x -= 0xffff;
+                                    if (y > 0x7fff)
+                                        y -= 0xffff;
+                                    if (z > 0x7fff)
+                                        z -= 0xffff;
+                                    gLView.updateXYZ(x, y, z);
+                                }
+                            });
+
+                        }
+
                     }
                 });
 
-//                Log.i(TAG,"Read Iot data : x " + x + " ,y " + y + ",z " + z );
-//                Matrix.setRotateM(mMMatrix,0,0,x,y,z);
-                if(gLView !=null)
-                    gLView.updateXYZ(x,y,z);
-            }
-        });
-
-        mGattManager.addCharacteristicChangeListener(UUID.fromString(BtStaticVal.UUID_TI_PROJECT_ZERO_DATA_BMP180),
+        mGattManager.addCharacteristicChangeListener(UUID.fromString(UUID_TI_PROJECT_ZERO_DATA_BMP180),
                 new CharacteristicChangeListener() {
                     @Override
                     public void onCharacteristicChanged(String deviceAddress, BluetoothGattCharacteristic characteristic) {
                         String raw = new String(characteristic.getValue());
-//                        Log.i(TAG,"BMP raw data : " + raw);
-                        String [] list =  raw.split(",");
-                        Float temperature =  Float.parseFloat(list[0]);
+                        String[] list = raw.split(",");
+                        Float temperature = Float.parseFloat(list[0]);
                         Float pressure = Float.parseFloat(list[1]);
-                        Double altitude = 44330 * ( 1- Math.pow(pressure / PRESSURE_OF_SEA ,1.0 / 5.255));
-                        ((AppCompatActivity)view.getContext()).runOnUiThread(new Runnable() {
+                        Double altitude = 44330 * (1 - Math.pow(pressure / PRESSURE_OF_SEA, 1.0 / 5.255));
+                        ((AppCompatActivity) view.getContext()).runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                temp.setText(temperature.toString()+"℃");
-                                humi.setText(pressure.toString()+"㎩");
-                                alt.setText(String.format("%.2f",altitude)+"米");
+                                temp.setText(temperature.toString() + "℃");
+                                humi.setText(pressure.toString() + "㎩");
+                                alt.setText(String.format("%.2f", altitude) + "米");
                             }
                         });
 
                     }
                 });
 
-        Log.i(TAG,"isETC1Supported() : " + ETC1Util.isETC1Supported());
+        Log.i(TAG, "isETC1Supported() : " + ETC1Util.isETC1Supported());
 
 
     }
@@ -221,11 +224,10 @@ public class IotSensor extends Fragment {
     }
 
 
-
     @Override
     public void onPause() {
         super.onPause();
-        if( gLView != null) {
+        if (gLView != null) {
             gLView.onPause();
         }
     }
@@ -233,7 +235,7 @@ public class IotSensor extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if( gLView != null) {
+        if (gLView != null) {
             gLView.onResume();
         }
     }

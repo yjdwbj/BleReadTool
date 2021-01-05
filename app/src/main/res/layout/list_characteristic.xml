@@ -14,28 +14,72 @@
 
     <TextView
         android:id="@+id/c_name"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toEndOf="@+id/c_image"
-        android:layout_weight="1"
         android:text="TextView" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_alignParentRight="true"
+        android:orientation="horizontal"
+        >
+        <ImageView
+            android:id="@+id/opt_read"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:visibility="gone"
+            android:background="@drawable/dev_read" />
+        <ImageView
+            android:id="@+id/opt_write"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:visibility="gone"
+            android:background="@drawable/dev_write" />
+        <ImageView
+            android:id="@+id/opt_notify"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:visibility="gone"
+            android:background="@drawable/dev_notification_im" />
+    </LinearLayout>
 
     <TextView
         android:id="@+id/c_uuid"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/c_name"
         android:layout_toEndOf="@+id/c_image"
-        android:layout_weight="1"
         android:text="TextView" />
 
     <TextView
         android:id="@+id/c_attr"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/c_uuid"
         android:layout_toEndOf="@+id/c_image"
         android:layout_weight="1"
         android:text="TextView" />
+    <TextView
+        android:id="@+id/c_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/c_attr"
+        android:layout_below="@+id/c_attr"
+        android:visibility="gone"
+        />
+    <TextView
+        android:id="@+id/c_descriptor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/c_value"
+        android:layout_below="@+id/c_value"
+        android:visibility="gone"
+        />
 
 </RelativeLayout>

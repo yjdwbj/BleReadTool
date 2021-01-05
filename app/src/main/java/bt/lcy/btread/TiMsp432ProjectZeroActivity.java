@@ -2,21 +2,29 @@ package bt.lcy.btread;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NavUtils;
 import androidx.viewpager2.widget.ViewPager2;
 
+import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothGattService;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.widget.Toast;
 
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import adapters.ViewPagerFragmentAdapter;
 import bt.lcy.gatt.GattManager;
@@ -24,55 +32,87 @@ import bt.lcy.gatt.GattManager;
 import static bt.lcy.btread.BtStaticVal.BT_DEVICE;
 
 public class TiMsp432ProjectZeroActivity extends AppCompatActivity {
+
+    public static String UUID_TI_PROJECT_ZERO = "f0001110-0451-4000-b000-000000000000";
+    public static String UUID_TI_PROJECT_ZERO_LED_SERIVCE = "f0001110-0451-4000-b000-000000000000";
+
+
+    //  在 simplelink_cc2640r2_sdk_4_20_00_04/examples/rtos/CC2640R2_LAUNCHXL/blestack/project_zero/README.html 里定义是 RED r/w
+    //  在 simplelink_sdk_ble_plugin_3_20_00_24/examples/rtos/MSP_EXP432E401Y/bluetooth/project_zero/README.html 里定义是  LED color r/w
+    public static String UUID_TI_PROJECT_ZERO_LED_CHAR = "f0001111-0451-4000-b000-000000000000";
+
+    //  在 simplelink_cc2640r2_sdk_4_20_00_04/examples/rtos/CC2640R2_LAUNCHXL/blestack/project_zero/README.html 里定义是 GREEN r/w
+    public static String UUID_TI_PROJECT_ZERO_LED_G_STATUS = "f0001112-0451-4000-b000-000000000000";
+    public static String UUID_TI_PROJECT_ZERO_SW = "f0001120-0451-4000-b000-000000000000";
+
+    //    simplelink_sdk_ble_plugin_3_20_00_24/examples/rtos/MSP_EXP432E401Y/bluetooth/project_zero/README.html 里定义 SW1 notification
+    public static String UUID_TI_PROJECT_ZERO_SW1_STATUS = "f0001121-0451-4000-b000-000000000000";
+    public static String UUID_TI_PROJECT_ZERO_SW2_STATUS = "f0001122-0451-4000-b000-000000000000";
+    public static String UUID_TI_PROJECT_ZERO_DATA = "f0001130-0451-4000-b000-000000000000";
+    //  在 simplelink_cc2640r2_sdk_4_20_00_04/examples/rtos/CC2640R2_LAUNCHXL/blestack/project_zero/README.html 里定义是 DATA r/w
+    //  在 simplelink_cc2640r2_sdk_4_20_00_04/examples/rtos/CC2640R2_LAUNCHXL/blestack/project_zero/README.html 里定义是 DATA UTF8-string r/w
+    public static String UUID_TI_PROJECT_ZERO_DATA_W = "f0001131-0451-4000-b000-000000000000";
+
+    //  在 simplelink_cc2640r2_sdk_4_20_00_04/examples/rtos/CC2640R2_LAUNCHXL/blestack/project_zero/README.html 里定义是 DATA notification/W-N-R
+    public static String UUID_TI_PROJECT_ZERO_DATA_N = "f0001132-0451-4000-b000-000000000000";
+    // 为hmc5883l 三轴传感器,自定义特征码 0x1133.
+    public static String UUID_TI_PROJECT_ZERO_DATA_HMC5883L = "f0001133-0451-4000-b000-000000000000";
+    // 为DHT11 温湿度传感器,自定义特征码 0x1134.
+    public static String UUID_TI_PROJECT_ZERO_DATA_DHT11 = "f0001134-0451-4000-b000-000000000000";
+    // bmp180 传感器
+    public static String UUID_TI_PROJECT_ZERO_DATA_BMP180 = "f0001135-0451-4000-b000-000000000000";
+
+
+    private String TAG = TiMsp432ProjectZeroActivity.class.getName();
     static public BtService btService;
     // 参考 https://developer.android.com/guide/navigation/navigation-swipe-view-2
-    ViewPager2 viewPage2;
-    ViewPagerFragmentAdapter adapter;
+    ViewPager2 mViewPage2;
+    ViewPagerFragmentAdapter mAdapter;
+    private GattManager mGattManager;
 
-    GattManager mGattManager;
     BluetoothDevice mDevice;
 
-    public static String[] Profiles = {
-            BtStaticVal.UUID_TI_PROJECT_ZERO,
-            BtStaticVal.UUID_TI_PROJECT_ZERO_LED_SERIVCE,
-            BtStaticVal.UUID_TI_PROJECT_ZERO_SW,
-            BtStaticVal.UUID_TI_PROJECT_ZERO_DATA,
-    };
+    public static Set<String> Profiles =
+            new HashSet<String>(Arrays.asList(
+                    UUID_TI_PROJECT_ZERO,
+                    UUID_TI_PROJECT_ZERO_LED_SERIVCE,
+                    UUID_TI_PROJECT_ZERO_SW,
+                    UUID_TI_PROJECT_ZERO_DATA)
+            );
 
-    public static boolean isVaildUUID(String string) {
-        for (String s : Profiles) {
-            if (s.equals(string))
+    public static boolean isVaildUUID() {
+        for (final BluetoothGattService service : BtService.mDeviceServices) {
+            if (Profiles.contains(service.getUuid().toString())) {
                 return true;
+            }
         }
         return false;
     }
 
-    private boolean isConnected = false;
-    private String TAG = TiMsp432ProjectZeroActivity.class.getName();
-    // 关于广播  https://developer.android.com/guide/components/broadcasts
-    private final BroadcastReceiver gattBroadcastReceiver = new BroadcastReceiver() {
+    // Automatically handles Bluetooth turning off while connected to a demo
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             final String action = intent.getAction();
-            Log.i(TAG, "!!!!!gattBroadcastReceiver Got a BroadCast: " + action + ", " + intent.toUri(Intent.URI_INTENT_SCHEME).toString());
-            if (BtService.ACTION_GATT_DISCONNECTED.equals(action)) {
-                isConnected = false;
-                Toast.makeText(getApplicationContext(), R.string.srv_disconnect, Toast.LENGTH_SHORT).show();
-                Log.i(TAG, "!!!!!Got a BroadCast: " + action + ", " + intent.toUri(Intent.URI_INTENT_SCHEME).toString());
-                invalidateOptionsMenu();
-                onStop();
-            } else if(BtService.ACTION_GATT_CONNECTED.equals(action)) {
-                Log.i(TAG, "connected name : " + btService.getName());
-                Log.i(TAG, "!!!!!gattBroadcastReceiver Got a BroadCast: " + action + ", " + intent.toUri(Intent.URI_INTENT_SCHEME).toString());
-                btService.setCharacteristicNotification(btService.getCharacteristicByUUID(BtStaticVal.UUID_TI_PROJECT_ZERO_SW1_STATUS), true);
-                btService.setCharacteristicNotification(btService.getCharacteristicByUUID(BtStaticVal.UUID_TI_PROJECT_ZERO_SW2_STATUS), true);
-                btService.setCharacteristicNotification(btService.getCharacteristicByUUID(BtStaticVal.UUID_TI_PROJECT_ZERO_DATA_N), true);
 
-            } else if (BtService.ACTION_DATA_AVAILABLE.equals(action)) {
-                // 有收到新的广播数据。
-                final String uuid = intent.getStringExtra(BtService.EXTRA_SERVICE_UUID);
-                final String text = intent.getStringExtra(BtService.EXTRA_TEXT);
-                final String cuuid = intent.getStringExtra(BtService.EXTRA_CHARACTERISTIC_UUID);
+            if (action.equals(BluetoothAdapter.ACTION_STATE_CHANGED)) {
+                final int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE,
+                        BluetoothAdapter.ERROR);
+                switch (state) {
+                    case BluetoothAdapter.STATE_OFF:
+                        Log.d("PZ_Activity", "BT turned off");
+
+                        if (mViewPage2 != null) {
+                            onBackPressed();
+                        }
+                        break;
+                    case BluetoothAdapter.STATE_TURNING_OFF:
+                        break;
+                    case BluetoothAdapter.STATE_ON:
+                        break;
+                    case BluetoothAdapter.STATE_TURNING_ON:
+                        break;
+                }
             }
         }
     };
@@ -86,29 +126,28 @@ public class TiMsp432ProjectZeroActivity extends AppCompatActivity {
     }
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
-
         mDevice = (BluetoothDevice) bundle.getParcelable(BT_DEVICE);
+        mGattManager = new GattManager(TiMsp432ProjectZeroActivity.this, UUID_TI_PROJECT_ZERO);
+        mGattManager.connectToDevice(mDevice, false);
+
+        // Detect Bluetooth on/off state
+        IntentFilter filter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
+        registerReceiver(mReceiver, filter);
 
         // 参考 Activity生命周期  https://developer.android.com/guide/components/activities/activity-lifecycle
         // https://pspdfkit.com/blog/2019/using-the-bottom-navigation-view-in-android/
         setContentView(R.layout.ti_msp432_project_zero_viewpager2);
         TabLayout tabLayout = findViewById(R.id.tab_layout);
-        mGattManager = new GattManager(this,BtStaticVal.UUID_TI_PROJECT_ZERO);
-        mGattManager.connectToDevice(mDevice,false);
 
-        viewPage2 = findViewById(R.id.pager2);
-        adapter = new ViewPagerFragmentAdapter(this);
-        viewPage2.setAdapter(adapter);
-        viewPage2.setUserInputEnabled(false);
-
-
-
+        mViewPage2 = findViewById(R.id.pager2);
+        mAdapter = new ViewPagerFragmentAdapter(this);
+        mViewPage2.setAdapter(mAdapter);
+//        viewPage2.setUserInputEnabled(false);
 //        new TabLayoutMediator(tabLayout, viewPage2, new TabLayoutMediator.TabConfigurationStrategy() {
 //            @Override
 //            public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
@@ -118,48 +157,50 @@ public class TiMsp432ProjectZeroActivity extends AppCompatActivity {
 //        });
         // 开启Lambda支持。 https://stackoverflow.com/questions/22703412/java-lambda-expressions-not-supported-at-this-language-level
         // For Android 3.0+ Go File → Project Structure → Module → app and In Properties Tab set Source Compatibility and Target Compatibility to 1.8 (Java 8)
-        new TabLayoutMediator(tabLayout, viewPage2, (tab, position) -> {
-            tab.setText(adapter.getText(position));
-            tab.setIcon(adapter.getIcon(position));
-            viewPage2.setCurrentItem(position);
-
+        new TabLayoutMediator(tabLayout, mViewPage2, (tab, position) -> {
+            tab.setText(mAdapter.getText(position));
+            tab.setIcon(mAdapter.getIcon(position));
+//            viewPage2.setCurrentItem(position);
         }).attach();
 
 
-    }
-
-
-
-    private void setSystemId() {
-        BluetoothGattCharacteristic characteristic = btService.getCharacteristicByUUID(BtStaticVal.SYSTEM_ID);
-        Log.i(TAG, "read System ID......> " + characteristic.getProperties());
-        byte[] val = new byte[10];
-        try {
-            val = characteristic.getValue();
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        }
-
-        final String txt = new String(val);
-
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                getSupportActionBar().setTitle(txt);
-            }
-        });
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case android.R.id.home: {
+                onBackPressed();
+                return true;
+            }
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        Log.i(TAG,"onBackPressed !!!!!!!!!!!");
+        Log.i(TAG, "onBackPressed !!!!!!!!!!!");
+
+        try{
+            if(mReceiver!=null)
+                unregisterReceiver(mReceiver);
+        }catch(Exception e)
+        {
+
+        }
+
+        if (mGattManager!= null) {
+            mGattManager.close(mDevice);
+            mGattManager = null;
+        }
+        finish();
     }
 
     /**
@@ -173,23 +214,17 @@ public class TiMsp432ProjectZeroActivity extends AppCompatActivity {
         super.onPause();
     }
 
-
-
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-//        return super.onTouchEvent(event);
-        Log.i(TAG, "touch event return true!!!!!!");
-        return true;
-    }
-
     @Override
     protected void onDestroy() {
-        super.onDestroy();
-        if(mGattManager !=null){
-            mGattManager.close(mDevice);
-            mGattManager = null;
+
+        try{
+            if(mReceiver!=null)
+                unregisterReceiver(mReceiver);
+        }catch(Exception e)
+        {
+
         }
+        super.onDestroy();
     }
 
     @Override

@@ -2,22 +2,24 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/listBackground"
+    android:layout_margin="2dp"
+    android:background="@android:color/white"
     android:orientation="horizontal"
+    android:fillViewport="true"
     android:textAlignment="center">
 
     <RelativeLayout
-        android:layout_width="wrap_content"
+        android:background="@drawable/share_rounded_corner_with_border"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <ImageView
             android:id="@+id/device_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_alignParentLeft="true"
             android:layout_margin="5dp"
-            android:background="@drawable/ic_bluetooth_48px" />
-
+            android:background="@drawable/bluetooth_search_foreground" />
 
         <TextView
             android:id="@+id/device_name"
@@ -46,9 +48,10 @@
             android:id="@+id/device_company"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/device_image"
-            android:layout_toLeftOf="@id/device_rssi_val"
-            android:layout_below="@id/device_address"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@id/device_image"
+            android:layout_marginLeft="10dp"
+            android:maxWidth="200dp"
             android:text="TextView"
             android:textAppearance="?attr/textAppearanceBody2"
             android:textColor="@color/colorPrimary"
@@ -56,22 +59,38 @@
 
         <TextView
             android:id="@+id/device_rssi_val"
+            android:textColor="@color/colorPrimary"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
+            android:layout_below="@id/device_connect"
             android:layout_marginTop="10dp"
             android:layout_marginRight="10dp"
+            android:minWidth="150dp"
             android:text="TextView" />
 
         <ImageView
             android:id="@+id/device_rssi_img"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_below="@id/device_rssi_val"
-            android:layout_marginBottom="10dp"
-            android:layout_marginRight="20dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="1dp"
+            android:layout_toLeftOf="@id/device_rssi_val"
+            android:layout_alignBottom="@id/device_rssi_val"
+            android:textAlignment="textStart"
             android:background="@drawable/ic_signal_cellular_0_bar_24px" />
+
+        <TextView
+            android:id="@+id/device_connect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_alignParentRight="true"
+            android:padding="8dp"
+            android:textColor="@android:color/white"
+            android:background="@color/colorPrimary"
+            android:text="@string/connect" />
     </RelativeLayout>
 
 </LinearLayout>

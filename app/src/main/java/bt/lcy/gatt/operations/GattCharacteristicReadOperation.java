@@ -1,4 +1,4 @@
-package bt.lcy.gatt.operation;
+package bt.lcy.gatt.operations;
 
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;

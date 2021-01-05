@@ -2,51 +2,43 @@ package bt.lcy.btread.fragments;
 
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGattCharacteristic;
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.viewpager2.widget.ViewPager2;
 
 import android.text.Html;
 import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.google.android.material.tabs.TabLayout;
-import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.android.material.textfield.TextInputEditText;
 
-import java.security.Provider;
-import java.util.Date;
 import java.util.UUID;
 
-import bt.lcy.btread.BtService;
 import bt.lcy.btread.BtStaticVal;
 import bt.lcy.btread.R;
 import bt.lcy.btread.TiMsp432ProjectZeroActivity;
 import bt.lcy.gatt.CharacteristicChangeListener;
-import bt.lcy.gatt.GattCharacteristicReadCallback;
 import bt.lcy.gatt.GattManager;
-import bt.lcy.gatt.GattOperationBundle;
-import bt.lcy.gatt.operation.GattCharacteristicReadOperation;
-import bt.lcy.gatt.operation.GattCharacteristicWriteOperation;
-import bt.lcy.gatt.operation.GattSetNotificationOperation;
+import bt.lcy.gatt.operations.GattCharacteristicWriteOperation;
+import bt.lcy.gatt.operations.GattSetNotificationOperation;
+
+import static bt.lcy.btread.TiMsp432ProjectZeroActivity.UUID_TI_PROJECT_ZERO_DATA;
+import static bt.lcy.btread.TiMsp432ProjectZeroActivity.UUID_TI_PROJECT_ZERO_DATA_N;
 
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link StringStream#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class StringStream extends Fragment {
+public class StringStream extends ItemFragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -112,6 +104,7 @@ public class StringStream extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        final ScrollView scrollView = view.findViewById(R.id.log_textarea);
         sendButton = view.findViewById(R.id.send_string);
         textArea = view.findViewById(R.id.log_content);
         textArea.setMovementMethod(new ScrollingMovementMethod());
@@ -123,13 +116,13 @@ public class StringStream extends Fragment {
                 if (inputext.length() > 0) {
                     Long tsLong = System.currentTimeMillis() / 1000;
                     String text = inputext.length() > 20 ? inputext.substring(0, 20) : inputext;
-                    textArea.append(tsLong.toString() + ",write:" + text + ",len:" + text.length() + "\r\n");
+                    textArea.append( "\r\n" + tsLong.toString() + ",write:" + text + ",len:" + text.length() + "\r\n");
                     textInputEditText.setText("");
 
                     mGattManager.queue(new GattCharacteristicWriteOperation(
                             mDevice,
-                            UUID.fromString(BtStaticVal.UUID_TI_PROJECT_ZERO_DATA),
-                            UUID.fromString(BtStaticVal.UUID_TI_PROJECT_ZERO_DATA_N),
+                            UUID.fromString(UUID_TI_PROJECT_ZERO_DATA),
+                            UUID.fromString(UUID_TI_PROJECT_ZERO_DATA_N),
                             text.getBytes())
                     );
 //                        mGattManager.queue(new GattCharacteristicWriteOperation(
@@ -163,16 +156,18 @@ public class StringStream extends Fragment {
 
         });
 
-
+        // set notification true
         mGattManager.queue(new GattSetNotificationOperation(
                 mDevice,
-                UUID.fromString(BtStaticVal.UUID_TI_PROJECT_ZERO_DATA),
-                UUID.fromString(BtStaticVal.UUID_TI_PROJECT_ZERO_DATA_N),
+                UUID.fromString(UUID_TI_PROJECT_ZERO_DATA),
+                UUID.fromString(UUID_TI_PROJECT_ZERO_DATA_N),
                 UUID.fromString(BtStaticVal.CCC_DESCRIPTOR_UUID),
                 true
         ));
+
+        // handle notification event.
         mGattManager.addCharacteristicChangeListener(
-                UUID.fromString(BtStaticVal.UUID_TI_PROJECT_ZERO_DATA_N),
+                UUID.fromString(UUID_TI_PROJECT_ZERO_DATA_N),
                 new CharacteristicChangeListener() {
                     @Override
                     public void onCharacteristicChanged(String deviceAddress, final BluetoothGattCharacteristic characteristic) {
@@ -183,8 +178,15 @@ public class StringStream extends Fragment {
                                 Long tsLong = System.currentTimeMillis() / 1000;
                                 String ts = tsLong.toString();
                                 String text = new String(characteristic.getValue());
-                                String colortxt = "<font color=#000080>" + ts + ",read:" + text + ",len:" + text.length()+"\r\n" + "</font>";
+                                String colortxt = "<font color=#000080>" + ts + ",read:" + text + ",len:" + text.length()+ "</font>\r\n";
                                 textArea.append(Html.fromHtml(colortxt));
+//                                scrollView.scrollTo(0,scrollView.getBottom());
+                                scrollView.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        scrollView.fullScroll(ScrollView.FOCUS_DOWN);
+                                    }
+                                });
                             }
                         });
                     }

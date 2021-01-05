@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:fillViewport="true"
+    android:textAlignment="center"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <ListView
+        android:id="@+id/data_input_list"
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <TextView
+        android:id="@+id/data_addvalue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ADD VALUE"
+        android:textStyle="bold"
+        android:textColor="@color/colorPrimary"
+        android:layout_margin="10dp"
+        />
+
+</LinearLayout>

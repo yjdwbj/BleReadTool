@@ -10,41 +10,30 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager2.widget.ViewPager2;
-
-import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.google.android.material.tabs.TabLayout;
-import com.google.android.material.tabs.TabLayoutMediator;
-import com.skydoves.colorpickerview.sliders.BrightnessSlideBar;
-
 import java.util.UUID;
 
-import adapters.ViewPagerFragmentAdapter;
 import bt.lcy.btread.BtStaticVal;
 import bt.lcy.btread.R;
-import bt.lcy.btread.TiMsp432ProjectZeroActivity;
 import bt.lcy.gatt.CharacteristicChangeListener;
 import bt.lcy.gatt.GattManager;
 import bt.lcy.gatt.GattOperationBundle;
-import bt.lcy.gatt.operation.GattSetNotificationOperation;
+import bt.lcy.gatt.operations.GattSetNotificationOperation;
 
-import static android.media.ToneGenerator.TONE_CDMA_ONE_MIN_BEEP;
-import static com.skydoves.colorpickerview.ActionMode.ALWAYS;
+import static bt.lcy.btread.TiMsp432ProjectZeroActivity.UUID_TI_PROJECT_ZERO_SW;
+import static bt.lcy.btread.TiMsp432ProjectZeroActivity.UUID_TI_PROJECT_ZERO_SW1_STATUS;
+import static bt.lcy.btread.TiMsp432ProjectZeroActivity.UUID_TI_PROJECT_ZERO_SW2_STATUS;
 
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link ButtonFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ButtonFragment extends Fragment {
+public class ButtonFragment extends ItemFragment {
     // 参考 https://developer.android.com/guide/navigation/navigation-swipe-view-2#java
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -68,8 +57,8 @@ public class ButtonFragment extends Fragment {
     public ButtonFragment(GattManager manager, BluetoothDevice btdevice) {
         mGattManager = manager;
         mDevice = btdevice;
-        button1ToneRun = new ToneGenerator(AudioManager.STREAM_VOICE_CALL, 90);
-        button2ToneRun = new ToneGenerator(AudioManager.STREAM_VOICE_CALL, 80);
+        button1ToneRun = new ToneGenerator(AudioManager.STREAM_SYSTEM, 100);
+        button2ToneRun = new ToneGenerator(AudioManager.STREAM_SYSTEM, 95);
     }
 
     /**
@@ -115,21 +104,21 @@ public class ButtonFragment extends Fragment {
 
         GattOperationBundle bundle = new GattOperationBundle();
         bundle.addOperation(new GattSetNotificationOperation(
-                mDevice, UUID.fromString(BtStaticVal.UUID_TI_PROJECT_ZERO_SW),
-                UUID.fromString(BtStaticVal.UUID_TI_PROJECT_ZERO_SW1_STATUS),
+                mDevice, UUID.fromString(UUID_TI_PROJECT_ZERO_SW),
+                UUID.fromString(UUID_TI_PROJECT_ZERO_SW1_STATUS),
                 UUID.fromString(BtStaticVal.CCC_DESCRIPTOR_UUID),
                 true
         ));
         bundle.addOperation(new GattSetNotificationOperation(
-                mDevice, UUID.fromString(BtStaticVal.UUID_TI_PROJECT_ZERO_SW),
-                UUID.fromString(BtStaticVal.UUID_TI_PROJECT_ZERO_SW2_STATUS),
+                mDevice, UUID.fromString(UUID_TI_PROJECT_ZERO_SW),
+                UUID.fromString(UUID_TI_PROJECT_ZERO_SW2_STATUS),
                 UUID.fromString(BtStaticVal.CCC_DESCRIPTOR_UUID),
                 true
         ));
 
         mGattManager.queue(bundle);
 
-        mGattManager.addCharacteristicChangeListener(UUID.fromString(BtStaticVal.UUID_TI_PROJECT_ZERO_SW1_STATUS), new CharacteristicChangeListener() {
+        mGattManager.addCharacteristicChangeListener(UUID.fromString(UUID_TI_PROJECT_ZERO_SW1_STATUS), new CharacteristicChangeListener() {
             @Override
             public void onCharacteristicChanged(String deviceAddress, BluetoothGattCharacteristic characteristic) {
                 final int lsb = characteristic.getValue()[0] & 0xff;
@@ -143,7 +132,7 @@ public class ButtonFragment extends Fragment {
             }
         });
 
-        mGattManager.addCharacteristicChangeListener(UUID.fromString(BtStaticVal.UUID_TI_PROJECT_ZERO_SW2_STATUS), new CharacteristicChangeListener() {
+        mGattManager.addCharacteristicChangeListener(UUID.fromString(UUID_TI_PROJECT_ZERO_SW2_STATUS), new CharacteristicChangeListener() {
             @Override
             public void onCharacteristicChanged(String deviceAddress, BluetoothGattCharacteristic characteristic) {
                 final int lsb = characteristic.getValue()[0] & 0xff;

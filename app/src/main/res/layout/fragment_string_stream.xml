@@ -14,10 +14,10 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_margin="10dp"
-        android:background="@color/design_default_color_secondary_variant"
         android:text="@string/rw_log"
         android:textAlignment="center"
-        android:textColor="@android:color/white" />
+        android:textColor="@android:color/white"
+        android:background="@color/colorPrimary" />
 
     <ScrollView
         android:id="@+id/log_textarea"
@@ -31,9 +31,10 @@
         <TextView
             android:id="@+id/log_content"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:background="@color/design_default_color_secondary" />
+            android:textColor="@android:color/white"
+            android:background="@color/colorPrimary" />
     </ScrollView>
 
 

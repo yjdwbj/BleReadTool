@@ -2,7 +2,7 @@ package bt.lcy.gatt;
 
 import java.util.ArrayList;
 
-import bt.lcy.gatt.operation.GattOperation;
+import bt.lcy.gatt.operations.GattOperation;
 
 public class GattOperationBundle {
     final ArrayList<GattOperation> operations;

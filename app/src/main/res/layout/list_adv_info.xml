@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/share_rounded_corner_with_border"
+    android:orientation="vertical"
+    android:fillViewport="true"
+    android:textAlignment="center">
+
+    <TextView
+        android:id="@+id/expandedListItem"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft"
+        android:alpha="0.7"
+        android:textColor="@color/colorPrimary"/>
+    <TextView
+        android:id="@+id/raw_data"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/expandedListItem"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="50dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="15dp"
+        android:text="RAW"
+        android:textSize="18dp"
+        android:textStyle="bold"
+        android:textColor="@color/colorPrimary"
+        />
+
+</RelativeLayout>

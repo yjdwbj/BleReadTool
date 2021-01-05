@@ -13,6 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_margin="30dp"
+        android:textColor="@color/colorPrimary"
         android:text="@string/text_BUTTON" />
 
         <ImageView

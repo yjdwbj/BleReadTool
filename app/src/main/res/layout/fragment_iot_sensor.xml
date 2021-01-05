@@ -4,15 +4,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center"
+    android:background="@android:color/white"
     tools:context=".fragments.IotSensor">
     <!--        https://source.android.com/devices/graphics/arch-sv-glsv-->
     <!--   从GLSurfaceView继承一个自定的平面控件  -->
     <lcy.gles3d.IotGLSurfaceView
         android:id="@+id/glsurfaceview"
+        android:hardwareAccelerated="true"
         android:layout_width="match_parent"
         android:layout_height="520dp"
-        android:layout_centerVertical="true"
-        android:hardwareAccelerated="true" />
+        android:layout_centerVertical="true" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/iot_X"
@@ -23,12 +24,14 @@
         android:layout_alignParentBottom="true"
         android:gravity="bottom"
         android:layout_toLeftOf="@id/iot_Y"
+        android:textColorHint="@color/colorPrimary"
         android:hint="@string/iot_X">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/iot_input_x"
             android:layout_width="fill_parent"
             android:layout_height="match_parent"
+            android:textColorHint="@color/colorPrimary"
             android:editable="false" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -39,12 +42,14 @@
         android:layout_below="@id/glsurfaceview"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
+        android:textColorHint="@color/colorPrimary"
         android:hint="@string/iot_Y">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/iot_input_y"
             android:layout_width="fill_parent"
             android:layout_height="match_parent"
+            android:textColorHint="@color/colorPrimary"
             android:editable="false" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -57,11 +62,13 @@
         android:layout_alignParentBottom="true"
         android:layout_toRightOf="@id/iot_Y"
         android:layout_toEndOf="@id/iot_Y"
+        android:textColorHint="@color/colorPrimary"
         android:hint="@string/iot_Z">
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/iot_input_z"
             android:layout_width="fill_parent"
             android:layout_height="match_parent"
+            android:textColorHint="@color/colorPrimary"
             android:editable="false" />
     </com.google.android.material.textfield.TextInputLayout>
     <!-- TODO: Update blank fragment layout -->
@@ -73,12 +80,14 @@
         android:layout_alignParentTop="true"
         android:layout_toLeftOf="@id/iot_pressure"
         android:layout_above="@id/glsurfaceview"
+        android:textColorHint="@color/colorPrimary"
         android:hint="@string/iot_temp">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/iot_edit_temp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:textColorHint="@color/colorPrimary"
             android:editable="false" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -89,12 +98,14 @@
         android:layout_centerHorizontal="true"
         android:layout_above="@id/glsurfaceview"
         android:layout_alignParentTop="true"
+        android:textColorHint="@color/colorPrimary"
         android:hint="@string/iot_pressure">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/iot_edit_humi"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:textColorHint="@color/colorPrimary"
             android:editable="false" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -107,11 +118,13 @@
         android:layout_above="@id/glsurfaceview"
         android:layout_toRightOf="@id/iot_pressure"
         android:layout_toEndOf="@id/iot_pressure"
+        android:textColorHint="@color/colorPrimary"
         android:hint="@string/iot_altitude">
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/iot_edit_altitude"
             android:layout_width="fill_parent"
             android:layout_height="match_parent"
+            android:textColorHint="@color/colorPrimary"
             android:editable="false" />
     </com.google.android.material.textfield.TextInputLayout>
 

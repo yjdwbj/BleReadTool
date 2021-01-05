@@ -1,5 +1,6 @@
 package bt.lcy.btread;
 
+import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
 import android.content.BroadcastReceiver;
@@ -32,6 +33,8 @@ import java.util.List;
 import adapters.ReadDataAdapter;
 
 import static android.bluetooth.BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT;
+import static bt.lcy.btread.BtStaticVal.BT_CHAR;
+import static bt.lcy.btread.BtStaticVal.BT_DEVICE;
 
 public class ConsoleActivity extends AppCompatActivity {
 
@@ -54,14 +57,6 @@ public class ConsoleActivity extends AppCompatActivity {
     private boolean onlyRead = false;
 
 
-    public static void setBtService(final BtService btService) {
-        ConsoleActivity.btService = btService;
-    }
-
-    public static void setCharacteristic(final BluetoothGattCharacteristic characteristic) {
-        ConsoleActivity.characteristic = characteristic;
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.read_mode, menu);
@@ -78,9 +73,9 @@ public class ConsoleActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         setContentView(R.layout.rwn_console);
-
-
-        final Intent intent = getIntent();
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+        characteristic = (BluetoothGattCharacteristic) bundle.getParcelable(BT_CHAR);
 
         int properties = characteristic.getProperties();
 

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="dev_read" type="id" />
+    <item name="dev_write" type="id" />
+    <item name="dev_notification" type="id" />
+    <item name="dev_notification_im" type="id" />
+</resources>

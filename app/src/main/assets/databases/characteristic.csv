@@ -1,0 +1,324 @@
+10752| Device Name
+10753| Appearance
+10754| Peripheral Privacy Flag
+10755| Reconnection Address
+10756| Peripheral Preferred Connection Parameters
+10757| Service Changed
+10758| Alert Level
+10759| Tx Power Level
+10760| Date Time
+10761| Day of Week
+10762| Day Date Time
+10764| Exact Time 256
+10765| DST Offset
+10766| Time Zone
+10767| Local Time Information
+10769| Time with DST
+10770| Time Accuracy
+10771| Time Source
+10772| Reference Time Information
+10774| Time Update Control Point
+10775| Time Update State
+10776| Glucose Measurement
+10777| Battery Level
+10780| Temperature Measurement
+10781| Temperature Type
+10782| Intermediate Temperature
+10785| Measurement Interval
+10786| Boot Keyboard Input Report
+10787| System ID
+10788| Model Number String
+10789| Serial Number String
+10790| Firmware Revision String
+10791| Hardware Revision String
+10792| Software Revision String
+10793| Manufacturer Name String
+10794| IEEE 
+10795| Current Time
+10801| Scan Refresh
+10802| Boot Keyboard Output Report
+10803| Boot Mouse Input Report
+10804| Glucose Measurement Context
+10805| Blood Pressure Measurement
+10806| Intermediate Cuff Pressure
+10807| Heart Rate Measurement
+10808| Body Sensor Location
+10809| Heart Rate Control Point
+10815| Alert Status
+10816| Ringer Control Point
+10817| Ringer Setting
+10818| Alert Category ID Bit Mask
+10819| Alert Category ID
+10820| Alert Notification Control Point
+10821| Unread Alert Status
+10822| New Alert
+10823| Supported New Alert Category
+10824| Supported Unread Alert Category
+10825| Blood Pressure Feature
+10826| HID Information
+10827| Report Map
+10828| HID Control Point
+10829| Report
+10830| Protocol Mode
+10831| Scan Interval Window
+10832| PnP ID
+10833| Glucose Feature
+10834| Record Access Control Point
+10835| RSC Measurement
+10836| RSC Feature
+10837| SC Control Point
+10842| Aggregate
+10843| CSC Measurement
+10844| CSC Feature
+10845| Sensor Location
+10846| PLX Spot-Check Measurement
+10847| PLX Continuous Measurement
+10848| PLX Features
+10851| Cycling Power Measurement
+10852| Cycling Power Vector
+10853| Cycling Power Feature
+10854| Cycling Power Control Point
+10855| Location and Speed
+10856| Navigation
+10857| Position Quality
+10858| LN Feature
+10859| LN Control Point
+10860| Elevation
+10861| Pressure
+10862| Temperature
+10863| Humidity
+10864| True Wind Speed
+10865| True Wind Direction
+10866| Apparent Wind Speed
+10867| Apparent Wind Direction
+10868| Gust Factor
+10869| Pollen Concentration
+10870| UV Index
+10871| Irradiance
+10872| Rainfall
+10873| Wind Chill
+10874| Heat Index
+10875| Dew Point
+10877| Descriptor Value Changed
+10878| Aerobic Heart Rate Lower Limit
+10879| Aerobic Threshold
+10880| Age
+10881| Anaerobic Heart Rate Lower Limit
+10882| Anaerobic Heart Rate Upper Limit
+10883| Anaerobic Threshold
+10884| Aerobic Heart Rate Upper Limit
+10885| Date of Birth
+10886| Date of Threshold Assessment
+10887| Email Address
+10888| Fat Burn Heart Rate Lower Limit
+10889| Fat Burn Heart Rate Upper Limit
+10890| First Name
+10891| Five Zone Heart Rate Limits
+10892| Gender
+10893| Heart Rate Max
+10894| Height
+10895| Hip Circumference
+10896| Last Name
+10897| Maximum Recommended Heart Rate
+10898| Resting Heart Rate
+10899| Sport Type for Aerobic and Anaerobic Thresholds
+10900| Three Zone Heart Rate Limits
+10901| Two Zone Heart Rate Limits
+10902| VO2 Max
+10903| Waist Circumference
+10904| Weight
+10905| Database Change Increment
+10906| User Index
+10907| Body Composition Feature
+10908| Body Composition Measurement
+10909| Weight Measurement
+10910| Weight Scale Feature
+10911| User Control Point
+10912| Magnetic Flux Density - 2D
+10913| Magnetic Flux Density - 3D
+10914| Language
+10915| Barometric Pressure Trend
+10916| Bond Management Control Point
+10917| Bond Management Feature
+10918| Central Address Resolution
+10919| CGM Measurement
+10920| CGM Feature
+10921| CGM Status
+10922| CGM Session Start Time
+10923| CGM Session Run Time
+10924| CGM Specific Ops Control Point
+10925| Indoor Positioning Configuration
+10926| Latitude
+10927| Longitude
+10928| Local North Coordinate
+10929| Local East Coordinate
+10930| Floor Number
+10931| Altitude
+10932| Uncertainty
+10933| Location Name
+10934| URI
+10935| HTTP Headers
+10936| HTTP Status Code
+10937| HTTP Entity Body
+10938| HTTP Control Point
+10939| HTTPS Security
+10940| TDS Control Point
+10941| OTS Feature
+10942| object name
+10943| object type
+10944| object size
+10945| object first created
+10946| object last modified
+10947| object ID
+10948| object properties
+10949| object actioncontrol point
+10950| object list control point
+10951| object list filter
+10952| object changed
+10953| Resolvable Private Address Only
+10954| Unspecified
+10955| Directory Listing
+10956| Fitness Machine Feature
+10957| Treadmill Data
+10958| Cross Trainer Data
+10959| Step Climber Data
+10960| Stair Climber Data
+10961| Rower Data
+10962| Indoor Bike Data
+10963| Training Status
+10964| Supported Speed Range
+10965| Supported Inclination Range
+10966| Supported Resistance Level Range
+10967| Supported Heart Rate Range
+10968| Supported Power Range
+10969| Fitness Machine Control Point
+10970| Fitness Machine Status
+10971| Mesh Provisioning Data In
+10972| Mesh Provisioning Data Out
+10973| Mesh Proxy Data In
+10974| Mesh Proxy Data Out
+10976| Average Current
+10977| Average Voltage
+10978| Boolean
+10979| Chromatic Distance From Planckian
+10980| Chromaticity Coordinates
+10981| Chromaticity in CCT And Duv Values
+10982| Chromaticity Tolerance
+10983| CIE 13.3-
+10984| Coefficient
+10985| Correlated Color Temperature
+10986| Count 16
+10987| Count 24
+10988| Country Code
+10989| Date UTC
+10990| Electric Current
+10991| Electric Current Range
+10992| Electric Current Specification
+10993| Electric Current Statistics
+10994| Energy
+10995| Energy In A Period Of Day
+10996| Event Statistics
+10997| Fixed String 16
+10998| Fixed String 24
+10999| Fixed String 36
+11000| Fixed String 8
+11001| Generic Level
+11002| Global Trade Item Number
+11003| Illuminance
+11004| Luminous Efficacy
+11005| Luminous Energy
+11006| Luminous Exposure
+11007| Luminous Flux
+11008| Luminous Flux Range
+11009| Luminous Intensity
+11010| Mass Flow
+11011| Perceived Lightness
+11012| Percentage 8
+11013| Power
+11014| Power Specification
+11015| Relative Runtime In A Current Range
+11016| Relative Runtime In A Generic Level Range
+11017| Relative Value In A Voltage Range
+11018| Relative Value In An Illuminance Range
+11019| Relative Value In A Period Of Day
+11020| Relative Value In A Temperature Range
+11021| Temperature 8
+11022| Temperature 8 In A Period Of Day
+11023| Temperature 8 Statistics
+11024| Temperature Range
+11025| Temperature Statistics
+11026| Time Decihour 8
+11027| Time Exponential 8
+11028| Time Hour 24
+11029| Time Millisecond 24
+11030| Time Second 16
+11031| Time Second 8
+11032| Voltage
+11033| Voltage Specification
+11034| Voltage Statistics
+11035| Volume Flow
+11036| Chromaticity Coordinate
+11037| RC Feature
+11038| RC Settings
+11039| Reconnection Configuration Control Point
+11040| IDD Status Changed
+11041| IDD Status
+11042| IDD Annunciation Status
+11043| IDD Features
+11044| IDD Status Reader Control Point
+11045| IDD Command Control Point
+11046| IDD Command Data
+11047| IDD Record Access Control Point
+11048| IDD History Data
+11049| Client Supported Features
+11050| Database Hash
+11051| BSS Control Point
+11052| BSS Response
+11053| Emergency ID
+11054| Emergency Text
+11060| Enhanced Blood Pressure Measurement
+11061| Enhanced Intermediate Cuff Pressure
+11062| Blood Pressure Record
+11064| BR-EDR Handover Data
+11065| Bluetooth SIG Data
+11066| Server Supported Features
+11067| Physical Activity Monitor Features
+11068| General Activity Instantaneous Data
+11069| General Activity Summary Data
+11070| CardioRespiratory Activity Instantaneous Data
+11071| CardioRespiratory Activity Summary Data
+11072| Step Counter Activity Summary Data
+11073| Sleep Activity Instantaneous Data
+11074| Sleep Activity Summary Data
+11075| Physical Activity Monitor Control Point
+11076| Current Session
+11077| Session
+11078| Preferred Units
+11079| High Resolution Height
+11080| Middle Name
+11081| Stride Length
+11082| Handedness
+11083| Device Wearing Position
+11084| Four Zone Heart Rate Limits
+11085| High Intensity Exercise Threshold
+11086| Activity Goal
+11087| Sedentary Interval Notification
+11088| Caloric Intake
+11127| Audio Input State
+11128| Gain Settings Attribute
+11129| Audio Input Type
+11130| Audio Input Status
+11131| Audio Input Control Point
+11132| Audio Input Description
+11133| Volume State
+11134| Volume Control Point
+11135| Volume Flags
+11136| Offset State
+11137| Audio Location
+11138| Volume Offset Control Point
+11139| Audio Output Description
+11150| Device Time Feature
+11151| Device Time Parameters
+11152| Device Time
+11153| Device Time Control Point
+11154| Time Change Log Data

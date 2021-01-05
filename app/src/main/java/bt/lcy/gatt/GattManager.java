@@ -24,10 +24,10 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentHashMap;
 
-import bt.lcy.gatt.operation.GattCharacteristicReadOperation;
-import bt.lcy.gatt.operation.GattCharacteristicWriteOperation;
-import bt.lcy.gatt.operation.GattDescriptorReadOperation;
-import bt.lcy.gatt.operation.GattOperation;
+import bt.lcy.gatt.operations.GattCharacteristicReadOperation;
+import bt.lcy.gatt.operations.GattCharacteristicWriteOperation;
+import bt.lcy.gatt.operations.GattDescriptorReadOperation;
+import bt.lcy.gatt.operations.GattOperation;
 
 public class GattManager {
     private static final String TAG = GattManager.class.getName();
@@ -92,6 +92,11 @@ public class GattManager {
             @Override
             public void onConnectionStateChange(final BluetoothGatt gatt, int status, int newState) {
                 super.onConnectionStateChange(gatt, status, newState);
+
+//                    EventBus.postEvent(Trigger.TRIGGER_CONNECTION_STATE_CHANGED,
+//                            new ConnectionStateChangedBundle(
+//                                    device.getAddress(),
+//                                    newState));
 
                 if (status == 133) {
                     Log.e("GattManager", "Got the status 133 bug, closing gatt");
@@ -288,7 +293,7 @@ public class GattManager {
         if(mGatts.containsKey(device.getAddress())) {
             execute(mGatts.get(device.getAddress()), operation);
         } else {
-//            connectToDevice(device);
+//            connectToDevice(device,false);
             Log.e("GattManager", "Bluetooth Device not yet connected. Call GattManager.connectToDevice(btDevice) first.");
         }
     }
@@ -362,10 +367,7 @@ public class GattManager {
                 .setCancelable(false)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-//                        ((AppCompatActivity)mContext).getSupportFragmentManager().popBackStack();
-                        ((AppCompatActivity)mContext).onBackPressed();
-                        ((AppCompatActivity)mContext).getParent().finish();
-                        ((AppCompatActivity)mContext).onBackPressed();
+                        ((AppCompatActivity)mContext).getSupportFragmentManager().popBackStack();
                     }
                 });
         AlertDialog alert = builder.create();

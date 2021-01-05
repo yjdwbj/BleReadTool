@@ -1,9 +1,10 @@
-package bt.lcy.gatt.operation;
+package bt.lcy.gatt.operations;
 
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattDescriptor;
 import android.util.Log;
+import bt.lcy.gatt.GattDescriptorReadCallback;
 
 import java.util.UUID;
 

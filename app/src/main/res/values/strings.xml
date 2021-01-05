@@ -7,7 +7,7 @@
     <string name="error_bluetooth_not_supported">该系统不支持蓝牙</string>
     <string name="unknown_devices">未知设备</string>
     <string name="error_bluetooth_initialize">初始化蓝牙错误</string>
-    <string name="connect">连接</string>
+    <string name="connect">连接 ...</string>
     <string name="disconnect">断开</string>
     <string name="ble_not_supported">该设备不支持BLE</string>
     <string name="generic_access">常规</string>
@@ -16,7 +16,10 @@
     <string name="unknow_characteristic">未知特征值</string>
     <string name="send">发送</string>
     <string name="read">读取</string>
+    <string name="cancel">取消</string>
     <string name="toggle">切换</string>
+    <string name="gps_network_not_enabled">蓝牙扫描必须开启位置服务</string>
+    <string name="open_location_settings">打开位置服务</string>
     <string name="startlistener">开始监听....</string>
     <string name="stringmode">字符串模式</string>
     <string name="hexstringmode">HEX模式</string>
@@ -84,4 +87,15 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string-array name="input_data_type">
+        <item>BYTE ARRAY</item>
+        <item>BYTE</item>
+        <item>UINT 8</item>
+        <item>UINT 16</item>
+        <item>UINT 32</item>
+        <item>TEXT</item>
+        <item>FLOAT 16</item>
+        <item>FLOAT 32</item>
+    </string-array>
 </resources>
