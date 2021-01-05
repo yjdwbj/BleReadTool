@@ -31,7 +31,7 @@ public class IotGLSurfaceView extends GLSurfaceView {
         setEGLContextClientVersion(2);
 //        renderer = new TriangleRenderer();
 //        setPreserveEGLContextOnPause(true);
-        renderer = new CubeRender(getContext());
+        renderer = new CubeRender(context);
 //        renderer = new SimpleTextureCube(getContext());
         setRenderer(renderer);
 

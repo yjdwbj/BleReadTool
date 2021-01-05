@@ -14,9 +14,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.text.Html;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.tabs.TabLayout;
@@ -29,6 +32,7 @@ import java.util.Set;
 import adapters.ViewPagerFragmentAdapter;
 import bt.lcy.gatt.GattManager;
 
+import static androidx.appcompat.app.ActionBar.DISPLAY_SHOW_CUSTOM;
 import static bt.lcy.btread.BtStaticVal.BT_DEVICE;
 
 public class TiMsp432ProjectZeroActivity extends AppCompatActivity {
@@ -164,6 +168,12 @@ public class TiMsp432ProjectZeroActivity extends AppCompatActivity {
         }).attach();
 
 
+        getSupportActionBar().setDisplayOptions(DISPLAY_SHOW_CUSTOM);
+        View viewActionBar = getLayoutInflater().inflate(R.layout.dev_connected,null);
+        //getSupportActionBar().setCustomView(R.layout.dev_connected);
+        getSupportActionBar().setCustomView(viewActionBar);
+        TextView title = (TextView) viewActionBar.findViewById(R.id.dev_title);
+        title.setText(Html.fromHtml( mDevice.getName() + "<br>" + mDevice.getAddress()));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 

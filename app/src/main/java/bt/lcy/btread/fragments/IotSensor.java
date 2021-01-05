@@ -20,6 +20,7 @@ import com.google.android.material.textfield.TextInputEditText;
 
 import java.io.InterruptedIOException;
 import java.net.URI;
+import java.util.Arrays;
 import java.util.UUID;
 
 import bt.lcy.btread.R;
@@ -157,15 +158,13 @@ public class IotSensor extends ItemFragment {
                     @Override
                     public void onCharacteristicChanged(String deviceAddress, BluetoothGattCharacteristic characteristic) {
                         final byte[] raw = characteristic.getValue();
-                        final float xx = raw[0] << 8 | raw[1];
-                        final float yy = raw[4] << 8 | raw[5];
-                        final float zz = raw[2] << 8 | raw[3];
+                        final XYZ xyz = new XYZ(raw);
                         ((AppCompatActivity) view.getContext()).runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                aX.setText(String.format("%.2f", xx));
-                                aY.setText(String.format("%.2f", yy));
-                                aZ.setText(String.format("%.2f", zz));
+                                aX.setText(String.format("%.2f", xyz.getX()));
+                                aY.setText(String.format("%.2f", xyz.getY()));
+                                aZ.setText(String.format("%.2f", xyz.getZ()));
                             }
                         });
 
@@ -173,17 +172,7 @@ public class IotSensor extends ItemFragment {
                             gLView.queueEvent(new Runnable() {
                                 @Override
                                 public void run() {
-                                    float x = raw[0] << 8 | raw[1];
-                                    float z = raw[2] << 8 | raw[3];
-                                    float y = raw[4] << 8 | raw[5];
-
-                                    if (x > 0x7fff)
-                                        x -= 0xffff;
-                                    if (y > 0x7fff)
-                                        y -= 0xffff;
-                                    if (z > 0x7fff)
-                                        z -= 0xffff;
-                                    gLView.updateXYZ(x, y, z);
+                                    gLView.updateXYZ(xyz.getX(), xyz.getY(), xyz.getZ());
                                 }
                             });
 
@@ -216,6 +205,38 @@ public class IotSensor extends ItemFragment {
         Log.i(TAG, "isETC1Supported() : " + ETC1Util.isETC1Supported());
 
 
+    }
+
+    private  class XYZ{
+        public  float x;
+        public  float y;
+        public  float z;
+        XYZ(final byte raw[])
+        {
+            int xx = raw[0] << 8 | (raw[1] & 0xff);
+            int zz = raw[2] << 8 | (raw[3] & 0xff);
+            int yy = raw[4] << 8 | (raw[5] & 0xff);
+            if (xx > 0x7fff)
+                xx -= 0xffff;
+            if (yy > 0x7fff)
+                yy -= 0xffff;
+            if (zz > 0x7fff)
+                zz -= 0xffff;
+            x = Integer.valueOf(xx).floatValue();
+            y = Integer.valueOf(yy).floatValue();
+            z = Integer.valueOf(zz).floatValue();
+        }
+
+        public  float getX(){
+            return x;
+        }
+
+        public  float getY(){
+            return y;
+        }
+        public  float getZ(){
+            return z;
+        }
     }
 
     @Override

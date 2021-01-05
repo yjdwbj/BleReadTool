@@ -8,9 +8,19 @@ import android.graphics.Matrix;
 import android.graphics.drawable.Drawable;
 import android.opengl.GLES20;
 import android.opengl.GLUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.RawRes;
+import androidx.core.graphics.drawable.IconCompat;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 import bt.lcy.btread.LoggerConfig;
+import bt.lcy.btread.R;
 import bt.lcy.btread.fragments.StringStream;
 
 import static android.opengl.GLES20.GL_REPEAT;
@@ -55,7 +65,7 @@ public class TextureUtils {
         GLES20.glGenTextures(1, textureName, 0);
         GLES20.glBindTexture(GL_TEXTURE_2D, textureName[0]);
 
-        glTexParameterf(GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);
+        glTexParameterf(GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);
         glTexParameterf(GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
         GLUtils.texImage2D(GL_TEXTURE_2D, 0, bitmap, 0);
 //        glGenerateMipmap(GL_TEXTURE_2D);
@@ -63,19 +73,26 @@ public class TextureUtils {
         glBindTexture(GL_TEXTURE_2D, 0);
         return textureName[0];
     }
-    public static int loadCubeTexture2D(Context context, int[] cubeResources) {
 
-        final int[] textureId  = new int[6];
-        glGenTextures(6,textureId,0);
+    public static int loadCubeTexture2D(@NonNull Context context, @RawRes int[] cubeResources) {
+
+        final int[] textureId = new int[6];
+        glGenTextures(6, textureId, 0);
         GLES20.glBindTexture(GL_TEXTURE_2D, textureId[0]);
-        glTexParameterf(GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);
+        glTexParameterf(GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);
         glTexParameterf(GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
-        Bitmap bitmap;
-        for(int face=0;face < 6;face++){
-            bitmap = BitmapFactory.decodeStream(context.getResources().openRawResource(cubeResources[face]));
-            glBindTexture(GL_TEXTURE_2D,textureId[face]);
-            texImage2D(GL_TEXTURE_2D,0,bitmap,0);
+        Bitmap bitmap = null;
+        // https://stackoverflow.com/questions/24389043/bitmapfactory-decoderesource-returns-null-for-shape-defined-in-xml-drawable
+        for (int face = 0; face < 6; face++) {
+            Drawable drawable = context.getResources().getDrawableForDensity(cubeResources[face], DisplayMetrics.DENSITY_MEDIUM);
+            bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),drawable.getIntrinsicHeight(), Bitmap.Config.RGB_565);
+            Canvas canvas = new Canvas(bitmap);
+            drawable.setBounds(0,0,canvas.getWidth(),canvas.getHeight());
+            drawable.draw(canvas);
+            glBindTexture(GL_TEXTURE_2D, textureId[face]);
+            texImage2D(GL_TEXTURE_2D, 0, bitmap, 0);
             bitmap.recycle();
+
         }
         return textureId[0];
     }

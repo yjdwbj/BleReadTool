@@ -24,7 +24,7 @@
                                             <option name="values">
                                               <map>
                                                 <entry key="color" value="000000" />
-                                                <entry key="imagePath" value="/tmp/baseline_close_24.xml" />
+                                                <entry key="imagePath" value="/tmp/baseline_looks_6_24.xml" />
                                                 <entry key="opacityPercent" value="80" />
                                               </map>
                                             </option>
@@ -36,7 +36,19 @@
                                           <PersistentState>
                                             <option name="values">
                                               <map>
-                                                <entry key="url" value="file:$PROJECT_DIR$/../../../Android/Sdk/icons/material/materialicons/close/baseline_close_24.xml" />
+                                                <entry key="url" value="file:$PROJECT_DIR$/../../../Android/Sdk/icons/material/materialicons/looks_6/baseline_looks_6_24.xml" />
+                                              </map>
+                                            </option>
+                                          </PersistentState>
+                                        </value>
+                                      </entry>
+                                      <entry key="image">
+                                        <value>
+                                          <PersistentState>
+                                            <option name="values">
+                                              <map>
+                                                <entry key="color" value="000000" />
+                                                <entry key="opacityPercent" value="80" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -68,7 +80,7 @@
                                   </option>
                                   <option name="values">
                                     <map>
-                                      <entry key="outputName" value="remove_item" />
+                                      <entry key="outputName" value="looksix" />
                                       <entry key="theme" value="CUSTOM" />
                                       <entry key="themeColor" value="6200ee" />
                                     </map>
@@ -87,7 +99,7 @@
                                             <option name="values">
                                               <map>
                                                 <entry key="color" value="ffffff" />
-                                                <entry key="imagePath" value="/tmp/baseline_bluetooth_searching_24.xml" />
+                                                <entry key="imagePath" value="/tmp/baseline_looks_one_24.xml" />
                                                 <entry key="scalingPercent" value="70" />
                                                 <entry key="trimmed" value="true" />
                                               </map>
@@ -100,7 +112,7 @@
                                           <PersistentState>
                                             <option name="values">
                                               <map>
-                                                <entry key="url" value="file:$PROJECT_DIR$/../../../Android/Sdk/icons/material/materialicons/bluetooth_searching/baseline_bluetooth_searching_24.xml" />
+                                                <entry key="url" value="file:$PROJECT_DIR$/../../../Android/Sdk/icons/material/materialicons/looks_one/baseline_looks_one_24.xml" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -124,8 +136,8 @@
                                               <map>
                                                 <entry key="color" value="ffffff" />
                                                 <entry key="fontFamily" value="Roboto Black" />
-                                                <entry key="scalingPercent" value="180" />
-                                                <entry key="text" value="4" />
+                                                <entry key="text" value="2" />
+                                                <entry key="trimmed" value="true" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -138,8 +150,8 @@
                                               <map>
                                                 <entry key="color" value="ffffff" />
                                                 <entry key="fontFamily" value="Roboto Black" />
-                                                <entry key="scalingPercent" value="180" />
-                                                <entry key="text" value="4" />
+                                                <entry key="text" value="2" />
+                                                <entry key="trimmed" value="true" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -150,8 +162,8 @@
                                   <option name="values">
                                     <map>
                                       <entry key="backgroundAssetType" value="COLOR" />
-                                      <entry key="foregroundAssetType" value="CLIP_ART" />
-                                      <entry key="outputName" value="bluetooth_search" />
+                                      <entry key="foregroundAssetType" value="TEXT" />
+                                      <entry key="outputName" value="looktwo" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -351,11 +363,6 @@
                                 </PersistentState>
                               </value>
                             </entry>
-                          </map>
-                        </option>
-                        <option name="values">
-                          <map>
-                            <entry key="outputIconType" value="ACTIONBAR" />
                           </map>
                         </option>
                       </PersistentState>

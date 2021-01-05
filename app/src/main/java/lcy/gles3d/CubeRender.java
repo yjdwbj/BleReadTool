@@ -102,14 +102,14 @@ public class CubeRender implements GLSurfaceView.Renderer {
                 ShaderUtils.readShaderFileFromRawResource(mContext, R.raw.simple_fragment_shader)
         );
 
-        textureName = TextureUtils.loadTexture(mContext, R.drawable.dice);
+        textureName = TextureUtils.loadTexture(mContext, R.drawable.cube);
 //        textureName = TextureUtils.loadCubeTexture2D(mContext, new int[]{
-//                R.mipmap.num_one,
-//                R.mipmap.num_two,
-//                R.mipmap.num_three,
-//                R.mipmap.num_four,
-//                R.mipmap.num_five,
-//                R.mipmap.num_six,
+//                R.mipmap.lookone,
+//                R.mipmap.looktwo,
+//                R.drawable.lookthree,
+//                R.drawable.lookfour,
+//                R.drawable.lookfive,
+//                R.drawable.looksix,
 //        });
 
         cube = new Cube(shader);
@@ -136,7 +136,7 @@ public class CubeRender implements GLSurfaceView.Renderer {
     {
         if( cube != null) {
             Matrix4f camera2 = new Matrix4f();
-            camera2.translate(0,0,-5f);
+            camera2.translate(0,0.0f,-4f);
             cube.setCamera(camera2);
             cube.updateXYZ(x,y,z);
             if(LoggerConfig.ON){
@@ -149,7 +149,7 @@ public class CubeRender implements GLSurfaceView.Renderer {
     public void onSurfaceChanged(GL10 gl, int width, int height) {
         GLES20.glViewport(0, 0, width, height);
         Matrix4f perspective = new Matrix4f();
-        perspective.loadPerspective(85.0f, (float)width / (float)height, 1.0f, -150.0f);
+        perspective.loadPerspective(85.0f, (float)width / (float)height, 1.0f, -100.0f);
 
         if(cube != null) {
             cube.setProjection(perspective);
@@ -161,10 +161,10 @@ public class CubeRender implements GLSurfaceView.Renderer {
         xRotation += deltaX / 16f;
         yRotation += deltaY / 16f;
 
-        if (yRotation < -90) {
-            yRotation = -90;
-        } else if (yRotation > 90) {
-            yRotation = 90;
+        if (yRotation < -180) {
+            yRotation = -180;
+        } else if (yRotation > 180) {
+            yRotation = 180;
         }
 
     }
@@ -205,8 +205,8 @@ public class CubeRender implements GLSurfaceView.Renderer {
             glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + 1, 0, GLES20.GL_RGB, 1, 1, 0,
                     GLES20.GL_RGB, GL_UNSIGNED_BYTE, img1);
         }
-        glTexParameteri(GLES20.GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);
-        glTexParameteri(GLES20.GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GLES20.GL_NEAREST);
+        glTexParameteri(GLES20.GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR_MIPMAP_NEAREST);
+        glTexParameteri(GLES20.GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         return textureId[0];
     }
 
