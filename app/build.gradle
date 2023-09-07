@@ -5,6 +5,11 @@ android {
     viewBinding {
         enabled = true
     }
+    lintOptions {
+        disable 'RuleToDisable', 'SecondRuleToDisable'
+        // use this line to check just listed rules
+        enable 'FirstRuleToCheck', 'LastRuleToCheck'
+    }
     // 测试部分
     useLibrary 'android.test.runner'
     useLibrary 'android.test.base'
@@ -28,6 +33,7 @@ android {
             }
         }
     }
+
     buildTypes {
         release {
             minifyEnabled false

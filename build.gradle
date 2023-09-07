@@ -11,20 +11,13 @@ buildscript {
                 includeGroupByRegex "com.google.*"
             }
         }
-        maven {
-            url 'https://maven.fabric.io/public'
-            content {
-                includeGroupByRegex "com.crashlytics.*"
-                includeGroupByRegex "io.fabric.*"
-            }
-        }
         jcenter()
     }
     dependencies {
 
         // https://developer.android.com/studio/releases/gradle-plugin?hl=zh_cn
         // 处理依赖问题可以参考 https://jasonatwood.io/archives/2033
-        classpath 'com.android.tools.build:gradle:3.6.3'
+        classpath 'com.android.tools.build:gradle:4.2.2'
         // gradle-plugin:3.4.0 match gradle-5.1.1-all.zip
         // Provides ARCore Session and related resources.
 //        implementation 'com.google.ar:core:1.15.0'
